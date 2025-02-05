@@ -33,7 +33,7 @@ namespace Flee.Test.ExpressionTests
             }
             sw.Stop();
             this.PrintSpeedMessage("Fast variables", iterations, sw);
-            Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
+            Assert.That(sw.ElapsedMilliseconds, Is.LessThan(expectedTime), "Test time above expected value");
         }
 
         private const String BigExpression = @"
@@ -601,7 +601,7 @@ AND NOT
             }
             sw.Stop();
             this.PrintSpeedMessage("Compile Big", iterations, sw);
-            Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
+            Assert.That(sw.ElapsedMilliseconds, Is.LessThan(expectedTime), "Test time above expected value");
             
 
             iterations = 100;
@@ -617,7 +617,7 @@ AND NOT
             }
             sw.Stop();
             this.PrintSpeedMessage("Compile Small", iterations, sw);
-            Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
+            Assert.That(sw.ElapsedMilliseconds, Is.LessThan(expectedTime), "Test time above expected value");
 
             iterations = 100;
             expectedTime = 100;
@@ -632,7 +632,7 @@ AND NOT
             }
             sw.Stop();
             this.PrintSpeedMessage("Compile Small Branching", iterations, sw);
-            Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
+            Assert.That(sw.ElapsedMilliseconds, Is.LessThan(expectedTime), "Test time above expected value");
         }
 
 

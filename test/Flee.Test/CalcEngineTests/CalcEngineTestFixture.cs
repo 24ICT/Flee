@@ -23,13 +23,13 @@ namespace Flee.Test.CalcEngineTests
             ce.Recalculate("a");
 
             var result = ce.GetResult<int>("c");
-            Assert.AreEqual(result, ((100 * 2) + 1) * 2);
+            Assert.That(result, Is.EqualTo(((100 * 2) + 1) * 2));
             variables.Remove("x");
             variables.Add("x", 345);
             ce.Recalculate("a");
             result = ce.GetResult<int>("c");
 
-            Assert.AreEqual(((345 * 2) + 1) * 2, result);
+            Assert.That(((345 * 2) + 1) * 2, Is.EqualTo(result));
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace Flee.Test.CalcEngineTests
             ce.Add("b", "a + a + a", context);
             ce.Recalculate("a");
             var result = ce.GetResult<int>("b");
-            Assert.AreEqual((100 * 2) * 3, result);
+            Assert.That((100 * 2) * 3, Is.EqualTo(result));
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Flee.Test.CalcEngineTests
             ce.Recalculate("a", "b");
 
             var result = ce.GetResult<int>("e");
-            Assert.AreEqual((100 * 2) + (24 * 2) + ((100 * 2) + (24 * 2)) + 80, result);
+            Assert.That((100 * 2) + (24 * 2) + ((100 * 2) + (24 * 2)) + 80, Is.EqualTo(result));
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace Flee.Test.CalcEngineTests
             ce.Add("x", "((a * 2) + (b ^ 2)) - (100 % 5)", context);
             ce.Recalculate("x");
             var result = ce.GetResult<int>("x");
-            Assert.AreEqual(420, result);
+            Assert.That(420, Is.EqualTo(result));
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace Flee.Test.CalcEngineTests
             ce.Add("x", "a <> 100", context);
             ce.Recalculate("x");
             var result = ce.GetResult<bool>("x");
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -108,13 +108,13 @@ namespace Flee.Test.CalcEngineTests
             ce.Add("x", "a > 100", context);
             ce.Recalculate("x");
             var result = ce.GetResult<bool>("x");
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
             ce.Remove("x");
             variables.Add("b", 100);
             ce.Add("x", "b = 100", context);
             ce.Recalculate("x");
             result = ce.GetResult<bool>("x");
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -127,7 +127,7 @@ namespace Flee.Test.CalcEngineTests
             ce.Add("x", "100 >> 2", context);
             ce.Recalculate("x");
             var result = ce.GetResult<int>("x");
-            Assert.AreEqual(25, result);
+            Assert.That(25, Is.EqualTo(result));
         }
 
         [Test]
@@ -144,7 +144,7 @@ namespace Flee.Test.CalcEngineTests
             ce.Add("c", "b * 2", context);
             ce.Recalculate("a", "b");
             var result = ce.GetResult<int>("c");
-            Assert.AreEqual(((100) * 2 + 1) * 2, result);
+            Assert.That(((100) * 2 + 1) * 2, Is.EqualTo(result));
         }
 
         [Test]
@@ -163,7 +163,7 @@ namespace Flee.Test.CalcEngineTests
             variables["y"] = 222;
             ce.Recalculate("b");
             var result = ce.GetResult<int>("c");
-            Assert.AreEqual(((100 * 2) + 222) * 2, result);
+            Assert.That(((100 * 2) + 222) * 2, Is.EqualTo(result));
         }
 
         [Test]
@@ -197,7 +197,7 @@ namespace Flee.Test.CalcEngineTests
             IDynamicExpression dynamicExpression = context.CompileDynamic(expression);
             foreach (var expressionVariable in expressionVariables.Keys)
                 vars[expressionVariable] = expressionVariables[expressionVariable];
-            var a = dynamicExpression.Evaluate();
+            object a = dynamicExpression.Evaluate();
 
             //ExpressionContext context = new ExpressionContext();
             //VariableCollection variables = context.Variables;

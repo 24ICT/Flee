@@ -38,8 +38,8 @@ namespace Flee.Test.ExpressionTests
             context.Variables.Add("m2", m2);
             IDynamicExpression e1 = context.CompileDynamic("m1 + m2");
 
-            Base added = (Base) e1.Evaluate();
-            Assert.AreEqual(7, added.Value);
+            Base added = (Base)e1.Evaluate();
+            Assert.That(7, Is.EqualTo(added.Value));
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace Flee.Test.ExpressionTests
             IDynamicExpression e1 = context.CompileDynamic("m1 + m2");
 
             Base added = (Base)e1.Evaluate();
-            Assert.AreEqual(7, added.Value);
+            Assert.That(7, Is.EqualTo(added.Value));
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace Flee.Test.ExpressionTests
             IDynamicExpression e1 = context.CompileDynamic("m1 + m2");
 
             Base added = (Base)e1.Evaluate();
-            Assert.AreEqual(7, added.Value);
+            Assert.That(7, Is.EqualTo(added.Value));
         }
 
         [Test]
@@ -84,7 +84,7 @@ namespace Flee.Test.ExpressionTests
             IDynamicExpression e1 = context.CompileDynamic("m1 + m2");
 
             Base added = (Base)e1.Evaluate();
-            Assert.AreEqual(7, added.Value);
+            Assert.That(7, Is.EqualTo(added.Value));
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace Flee.Test.ExpressionTests
             IDynamicExpression e1 = context.CompileDynamic("m1 + m2");
 
             Base added = (Base)e1.Evaluate();
-            Assert.AreEqual(7, added.Value);
+            Assert.That(7, Is.EqualTo(added.Value));
         }
 
         [Test]
@@ -126,7 +126,7 @@ namespace Flee.Test.ExpressionTests
             IDynamicExpression e1 = context.CompileDynamic("-m1");
 
             Base negated = (Base)e1.Evaluate();
-            Assert.AreEqual(-2, negated.Value);
+            Assert.That(-2, Is.EqualTo(negated.Value));
         }
 
         [Test]
@@ -139,7 +139,7 @@ namespace Flee.Test.ExpressionTests
             IDynamicExpression e1 = context.CompileDynamic("-m1");
 
             Base negated = (Base)e1.Evaluate();
-            Assert.AreEqual(-2, negated.Value);
+            Assert.That(-2, Is.EqualTo(negated.Value));
         }
 
         [Test]
@@ -152,7 +152,7 @@ namespace Flee.Test.ExpressionTests
             IDynamicExpression e1 = context.CompileDynamic("-m1 + m1");
 
             Base negated = (Base)e1.Evaluate();
-            Assert.AreEqual(0, negated.Value);
+            Assert.That(0, Is.EqualTo(negated.Value));
         }
     }
 }

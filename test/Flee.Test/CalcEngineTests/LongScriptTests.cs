@@ -5,29 +5,29 @@ using NUnit.Framework;
 
 namespace Flee.Test.CalcEngineTests
 {
-    [TestFixture]
-    public class LongScriptTests
-    {
-        private SimpleCalcEngine _myEngine;
+	[TestFixture]
+	public class LongScriptTests
+	{
+		private SimpleCalcEngine _myEngine;
 
 
 		public class TestFunction
-        {
+		{
 			static public Decimal Price(String s)
-            {
+			{
 				return 1.0m;
-            }
+			}
 
 			static public Decimal First(params object[] args)
-            {
+			{
 				return (Decimal)args[0];
-            }
-        }
+			}
+		}
 
-        public LongScriptTests()
-        {
-            var engine = new SimpleCalcEngine();
-            var context = new ExpressionContext();
+		public LongScriptTests()
+		{
+			var engine = new SimpleCalcEngine();
+			var context = new ExpressionContext();
 			context.Imports.AddType(typeof(TestFunction));
 			context.Imports.AddType(typeof(Math));
 			//            context.Imports.AddType(typeof(Math), "math");
@@ -41,12 +41,12 @@ namespace Flee.Test.CalcEngineTests
 			engine.Context.ParserOptions.FunctionArgumentSeparator = ',';
 			engine.Context.ParserOptions.DecimalSeparator = '.';
 			engine.Context.ParserOptions.RecreateParser();
-            _myEngine = engine;
-        }
+			_myEngine = engine;
+		}
 
-        [Test]
-        public void LongScriptWithManyFunctions()
-        {
+		[Test]
+		public void LongScriptWithManyFunctions()
+		{
 			//var script = System.IO.File.ReadAllText(@"test\Flee.Test\TestScripts\LongScriptWithManyFunctions.js");
 			var script = @"If((""LongTextToPushScriptLengthOver256CharactersJustToMakeSureItDoesntMatter"")=""C"", 
 	(
@@ -62,11 +62,11 @@ namespace Flee.Test.CalcEngineTests
 		)
 	)
 )";
-			
+
 			var expr = _myEngine.Context.CompileDynamic(script);
 			var result = expr.Evaluate();
 
-			Assert.AreEqual(84.0d, result);
+			Assert.That(84.0d, Is.EqualTo(result));
 		}
 
 
@@ -97,7 +97,7 @@ If(""A"" = ""A"",
 			var expr = _myEngine.Context.CompileDynamic(script);
 			var result = expr.Evaluate();
 
-			Assert.AreEqual(84.0d, result);
+			Assert.That(84.0d, Is.EqualTo(result));
 		}
 
 		[Test]
@@ -114,7 +114,7 @@ IF(2.1 > 2.1 AND 2.1 <= 2.1, 2.1, 2.1))))";
 			var expr = _myEngine.Context.CompileDynamic(script);
 			var result = expr.Evaluate();
 
-			Assert.AreEqual(2.1d, Convert.ToDecimal(result));
+			Assert.That(2.1d, Is.EqualTo(Convert.ToDecimal(result)));
 		}
 
 		[Test]
@@ -130,11 +130,11 @@ AND (5*6+13-6*9-3+1+2+3+4+5+6+7+8 = 5+6+7+8+9+1+2+3+4+5+6+1+2+3+4+9-48 OR 6+5+2+
 			var expr = _myEngine.Context.CompileDynamic(script);
 			var result = expr.Evaluate();
 
-			Assert.AreEqual(2.6d, result);
+			Assert.That(2.6d, Is.EqualTo(result));
 		}
 
 
-static string crashscript= @"
+		static string crashscript = @"
 if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 10.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
 if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 20.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
 if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 30.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
@@ -157,10 +157,10 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 				var e = _myEngine.Context.CompileDynamic(crashscript);
 			}
 			catch (ExpressionCompileException)
-            {
+			{
 				gotex = true;
-            }
-			Assert.IsTrue(gotex);
+			}
+			Assert.That(gotex, Is.True);
 		}
 
 
@@ -174,23 +174,23 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 			var expr = context.CompileDynamic(script);
 			var result = expr.Evaluate();
 
-			Assert.AreEqual(3.57d, result);
+			Assert.That(3.57d, Is.EqualTo(result));
 		}
 
 
 		[Test]
 		public void StringTest()
-        {
+		{
 			var e = _myEngine.Context.CompileDynamic("\"TEST\".Substring(0,2)");
 			var result = e.Evaluate();
 
-			Assert.AreEqual("TE", result);
+			Assert.That("TE", Is.EqualTo(result));
 		}
 
 
 		[Test]
 		public void DivideByZero()
-        {
+		{
 			var context = new ExpressionContext();
 			context.Options.IntegersAsDoubles = true;
 
@@ -198,7 +198,7 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 			var expr = context.CompileDynamic(script);
 			var result = expr.Evaluate();
 
-			Assert.AreEqual(0d, result);
+			Assert.That(0d, Is.EqualTo(result));
 		}
 
 	}
