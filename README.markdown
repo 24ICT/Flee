@@ -1,6 +1,8 @@
-# Flee (Supports Net6.0, Net5.0, Netstandard2.1, Netstandard2.0)
+# Flee (Supports net9.0, net8.0, net6.0, netstandard2.1, netstandard2.0)
  Fast Lightweight Expression Evaluator.
  Convert this project vb.net to c#.
+
+* Forked from [https://github.com/mparlak/Flee/](https://github.com/mparlak/Flee/)
   
  ## Project Description
 Flee is an expression parser and evaluator for the .NET framework. It allows you to compute the value of string expressions such as sqrt(a^2 + b^2) at runtime. It uses a custom compiler, strongly-typed expression language, and lightweight codegen to compile expressions directly to IL. This means that expression evaluation is extremely fast and efficient.

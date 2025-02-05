@@ -37,6 +37,10 @@ namespace Flee.Test.CalcEngineTests
 			context.Imports.AddType(typeof(string));
 
 			engine.Context = context;
+
+			engine.Context.ParserOptions.FunctionArgumentSeparator = ',';
+			engine.Context.ParserOptions.DecimalSeparator = '.';
+			engine.Context.ParserOptions.RecreateParser();
             _myEngine = engine;
         }
 
@@ -152,7 +156,7 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 			{
 				var e = _myEngine.Context.CompileDynamic(crashscript);
 			}
-			catch (ExpressionCompileException e)
+			catch (ExpressionCompileException)
             {
 				gotex = true;
             }

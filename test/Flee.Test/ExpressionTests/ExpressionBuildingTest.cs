@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Flee.PublicTypes;
 using NUnit.Framework;
 
@@ -36,6 +37,10 @@ namespace ExpressionBuildingTest
         {
             ExpressionContext context = new ExpressionContext();
             context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
+
+            context.ParserOptions.DecimalSeparator = '.';
+            context.ParserOptions.FunctionArgumentSeparator = ',';
+            context.ParserOptions.RecreateParser();
 
             int resultWhenTrue = 3;
 
@@ -106,6 +111,11 @@ namespace ExpressionBuildingTest
         public void IN_OperatorTest()
         {
             ExpressionContext context = new ExpressionContext();
+            context.Options.ParseCulture= new CultureInfo("en-US");
+            context.ParserOptions.DecimalSeparator = '.';
+            context.ParserOptions.FunctionArgumentSeparator = ',';
+            context.ParserOptions.RecreateParser();
+
             var e1 = context.CompileGeneric<bool>("NOT 15 IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22,23)");
 
             Assert.IsTrue(e1.Evaluate());

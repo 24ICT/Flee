@@ -583,6 +583,10 @@ AND NOT
             int iterations = 10;
 
             var context = new ExpressionContext();
+            context.ParserOptions.DecimalSeparator = '.';
+            context.ParserOptions.FunctionArgumentSeparator = ',';
+            context.ParserOptions.RecreateParser();
+
             context.Variables.ResolveVariableType += Variables_ResolveVariableType;
             context.Variables.ResolveVariableValue += Variables_ResolveVariableValue;
             Stopwatch sw;
@@ -632,7 +636,7 @@ AND NOT
         }
 
 
-        private static void Variables_ResolveVariableType(object sender, ResolveVariableTypeEventArgs e)
+        private static void Variables_ResolveVariableType(object? sender, ResolveVariableTypeEventArgs e)
         {
             if (e.VariableName.StartsWith("VARBOOL"))
             {
@@ -644,7 +648,7 @@ AND NOT
             }
         }
 
-        private static void Variables_ResolveVariableValue(object sender, ResolveVariableValueEventArgs e)
+        private static void Variables_ResolveVariableValue(object? sender, ResolveVariableValueEventArgs e)
         {
             if (e.VariableType == typeof(bool))
             {

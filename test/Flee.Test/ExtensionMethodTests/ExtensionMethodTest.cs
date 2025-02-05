@@ -88,6 +88,9 @@ namespace Flee.ExtensionMethodTests
             var expressionOwner = new TestData { Id = "World" };
             var context = new ExpressionContext(expressionOwner);
             context.Imports.AddType(typeof(TestDataExtensions));
+            context.ParserOptions.FunctionArgumentSeparator = ',';
+            context.ParserOptions.DecimalSeparator = '.';
+            context.ParserOptions.RecreateParser();
             return context;
         }
     }

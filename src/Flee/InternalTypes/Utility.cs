@@ -320,8 +320,9 @@ namespace Flee.InternalTypes
 
         public static int GetILGeneratorLength(ILGenerator ilg)
         {
-            System.Reflection.FieldInfo fi = typeof(ILGenerator).GetField("m_length", BindingFlags.Instance | BindingFlags.NonPublic);
-            return (int)fi.GetValue(ilg);
+            return ilg.ILOffset;
+            //System.Reflection.FieldInfo fi = typeof(ILGenerator).GetField("m_length", BindingFlags.Instance | BindingFlags.NonPublic);
+            //return (int)fi.GetValue(ilg);
         }
 
         public static bool IsLongBranch(int startPosition, int endPosition)
