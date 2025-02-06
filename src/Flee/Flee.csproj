@@ -14,6 +14,7 @@
         <LangVersion>latest</LangVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageVersion>2.0.1</PackageVersion>
+		<FileVersion>2.0.1</FileVersion>
         <Title>Flee</Title>
         <PackageProjectUrl>https://github.com/24ICT/Flee</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/24ICT/Flee</PackageLicenseUrl>

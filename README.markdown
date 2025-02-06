@@ -25,12 +25,7 @@ Flee is an expression parser and evaluator for the .NET framework. It allows you
 * Expressions can index arrays and collections, access fields and properties, and call functions on various types
 * Generated IL can be saved to an assembly and viewed with a disassembler
 
-### Installing Flee
-
-You should install Flee with NuGet:
-
-	Install-Package Flee -Source C:\PathToThePackageDir\Flee.2.0.1.nupkg
-   
+  
 ## More information
 * [Examples](https://github.com/mparlak/Flee/wiki/Examples) to learn how to create and evaluate expressions.
 
