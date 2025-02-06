@@ -10,16 +10,16 @@ namespace Flee.PublicTypes
     /// </summary>
     public sealed class VariableCollection : IDictionary<string, object>
     {
-        private IDictionary<string, IVariable> _myVariables;
+        private IDictionary<string, IVariable> _myVariables = default!;
         private readonly ExpressionContext _myContext;
 
-        public event EventHandler<ResolveVariableTypeEventArgs> ResolveVariableType;
+        public event EventHandler<ResolveVariableTypeEventArgs>? ResolveVariableType;
 
-        public event EventHandler<ResolveVariableValueEventArgs> ResolveVariableValue;
+        public event EventHandler<ResolveVariableValueEventArgs>? ResolveVariableValue;
 
-        public event EventHandler<ResolveFunctionEventArgs> ResolveFunction;
+        public event EventHandler<ResolveFunctionEventArgs>? ResolveFunction;
 
-        public event EventHandler<InvokeFunctionEventArgs> InvokeFunction;
+        public event EventHandler<InvokeFunctionEventArgs>? InvokeFunction;
 
         internal VariableCollection(ExpressionContext context)
         {
@@ -40,7 +40,7 @@ namespace Flee.PublicTypes
             _myVariables = new Dictionary<string, IVariable>(_myContext.Options.StringComparer);
         }
 
-        private void OnOptionsCaseSensitiveChanged(object sender, EventArgs e)
+        private void OnOptionsCaseSensitiveChanged(object? sender, EventArgs e)
         {
             this.CreateDictionary();
         }
@@ -57,7 +57,7 @@ namespace Flee.PublicTypes
             }
         }
 
-        internal void DefineVariableInternal(string name, Type variableType, object variableValue)
+        internal void DefineVariableInternal(string name, Type variableType, object? variableValue)
         {
             Utility.AssertNotNull(variableType, "variableType");
 
@@ -67,18 +67,19 @@ namespace Flee.PublicTypes
                 throw new ArgumentException(msg);
             }
 
-            IVariable v = this.CreateVariable(variableType, variableValue);
-            _myVariables.Add(name, v);
+            IVariable? v = this.CreateVariable(variableType, variableValue);
+            if (v != null)
+                _myVariables.Add(name, v);
         }
 
         internal Type GetVariableTypeInternal(string name)
         {
-            IVariable value = null;
+            IVariable? value = null;
             bool success = _myVariables.TryGetValue(name, out value);
 
             if (success == true)
             {
-                return value.VariableType;
+                return value!.VariableType;
             }
 
             ResolveVariableTypeEventArgs args = new ResolveVariableTypeEventArgs(name);
@@ -89,7 +90,7 @@ namespace Flee.PublicTypes
 
         private IVariable GetVariable(string name, bool throwOnNotFound)
         {
-            IVariable value = null;
+            IVariable? value = null;
             bool success = _myVariables.TryGetValue(name, out value);
 
             if (success == false & throwOnNotFound == true)
@@ -99,23 +100,23 @@ namespace Flee.PublicTypes
             }
             else
             {
-                return value;
+                return value!;
             }
         }
 
-        private IVariable CreateVariable(Type variableValueType, object variableValue)
+        private IVariable? CreateVariable(Type variableValueType, object? variableValue)
         {
-            Type variableType = default(Type);
+            Type? variableType = default!;
 
             // Is the variable value an expression?
-            IExpression expression = variableValue as IExpression;
-            ExpressionOptions options = null;
+            IExpression? expression = variableValue as IExpression;
+            ExpressionOptions? options = null;
 
             if (expression != null)
             {
                 options = expression.Context.Options;
                 // Get its result type
-                variableValueType = options.ResultType;
+                variableValueType = options.ResultType!;
 
                 // Create a variable that wraps the expression
 
@@ -137,9 +138,10 @@ namespace Flee.PublicTypes
 
             // Create the generic variable instance
             variableType = variableType.MakeGenericType(variableValueType);
-            IVariable v = (IVariable)Activator.CreateInstance(variableType);
+            if (variableType != null)
+                return (IVariable?)Activator.CreateInstance(variableType);
 
-            return v;
+            return null;
         }
 
         internal Type ResolveOnDemandFunction(string name, Type[] argumentTypes)
@@ -149,11 +151,11 @@ namespace Flee.PublicTypes
             return args.ReturnType;
         }
 
-        private static T ReturnGenericValue<T>(object value)
+        private static T ReturnGenericValue<T>(object? value)
         {
             if (value == null)
             {
-                return default(T);
+                return default!;
             }
             else
             {
@@ -161,7 +163,7 @@ namespace Flee.PublicTypes
             }
         }
 
-        private static void ValidateSetValueType(Type requiredType, object value)
+        private static void ValidateSetValueType(Type requiredType, object? value)
         {
             if (value == null)
             {
@@ -178,25 +180,37 @@ namespace Flee.PublicTypes
             }
         }
 
-        internal static MethodInfo GetVariableLoadMethod(Type variableType)
+        internal static MethodInfo? GetVariableLoadMethod(Type variableType)
         {
-            MethodInfo mi = typeof(VariableCollection).GetMethod("GetVariableValueInternal", BindingFlags.Public | BindingFlags.Instance);
-            mi = mi.MakeGenericMethod(variableType);
-            return mi;
+            MethodInfo? mi = typeof(VariableCollection).GetMethod("GetVariableValueInternal", BindingFlags.Public | BindingFlags.Instance);
+            if (mi != null)
+            {
+                mi = mi.MakeGenericMethod(variableType);
+                return mi;
+            }
+            return null;
         }
 
-        internal static MethodInfo GetFunctionInvokeMethod(Type returnType)
+        internal static MethodInfo? GetFunctionInvokeMethod(Type returnType)
         {
-            MethodInfo mi = typeof(VariableCollection).GetMethod("GetFunctionResultInternal", BindingFlags.Public | BindingFlags.Instance);
-            mi = mi.MakeGenericMethod(returnType);
-            return mi;
+            MethodInfo? mi = typeof(VariableCollection).GetMethod("GetFunctionResultInternal", BindingFlags.Public | BindingFlags.Instance);
+            if (mi != null)
+            {
+                mi = mi.MakeGenericMethod(returnType);
+                return mi;
+            }
+            return null;
         }
 
-        internal static MethodInfo GetVirtualPropertyLoadMethod(Type returnType)
+        internal static MethodInfo? GetVirtualPropertyLoadMethod(Type returnType)
         {
-            MethodInfo mi = typeof(VariableCollection).GetMethod("GetVirtualPropertyValueInternal", BindingFlags.Public | BindingFlags.Instance);
-            mi = mi.MakeGenericMethod(returnType);
-            return mi;
+            MethodInfo? mi = typeof(VariableCollection).GetMethod("GetVirtualPropertyValueInternal", BindingFlags.Public | BindingFlags.Instance);
+            if (mi != null)
+            {
+                mi = mi.MakeGenericMethod(returnType);
+                return mi;
+            }
+            return null;
         }
 
         private Dictionary<string, object> GetNameValueDictionary()
@@ -228,7 +242,7 @@ namespace Flee.PublicTypes
 
         public T GetVariableValueInternal<T>(string name)
         {
-            if (_myVariables.TryGetValue(name, out IVariable variable))
+            if (_myVariables.TryGetValue(name, out IVariable? variable))
             {
                 if (variable is IGenericVariable<T> generic)
                 {
@@ -250,9 +264,9 @@ namespace Flee.PublicTypes
         public T GetVirtualPropertyValueInternal<T>(string name, object component)
         {
             PropertyDescriptorCollection coll = TypeDescriptor.GetProperties(component);
-            PropertyDescriptor pd = coll.Find(name, true);
+            PropertyDescriptor? pd = coll.Find(name, true);
 
-            object value = pd.GetValue(component);
+            object? value = pd?.GetValue(component);
             ValidateSetValueType(typeof(T), value);
             return ReturnGenericValue<T>(value);
         }
@@ -336,8 +350,8 @@ namespace Flee.PublicTypes
 
         public bool TryGetValue(string key, out object value)
         {
-            IVariable v = this.GetVariable(key, false);
-            value = v?.ValueAsObject;
+            IVariable? v = this.GetVariable(key, false);
+            value = v?.ValueAsObject ?? default!;
             return v != null;
         }
 
@@ -370,7 +384,7 @@ namespace Flee.PublicTypes
             }
             set
             {
-                IVariable v = null;
+                IVariable? v = null;
 
                 if (_myVariables.TryGetValue(name, out v) == true)
                 {

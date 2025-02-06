@@ -17,7 +17,7 @@ namespace Flee.Resources
         {
             lock (this)
             {
-                ResourceManager rm = null;
+                ResourceManager? rm = null;
                 if (MyResourceManagers.TryGetValue(resourceFile, out rm) == false)
                 {
                     Type t = typeof(FleeResourceManager);
@@ -28,7 +28,7 @@ namespace Flee.Resources
             }
         }
 
-        private string GetResourceString(string resourceFile, string key)
+        private string? GetResourceString(string resourceFile, string key)
         {
             ResourceManager rm = this.GetResourceManager(resourceFile);
             return rm.GetString(key);
@@ -36,17 +36,17 @@ namespace Flee.Resources
 
         public string GetCompileErrorString(string key)
         {
-            return this.GetResourceString("CompileErrors", key);
+            return this.GetResourceString("CompileErrors", key) ?? key;
         }
 
         public string GetElementNameString(string key)
         {
-            return this.GetResourceString("ElementNames", key);
+            return this.GetResourceString("ElementNames", key) ?? key;
         }
 
         public string GetGeneralErrorString(string key)
         {
-            return this.GetResourceString("GeneralErrors", key);
+            return this.GetResourceString("GeneralErrors", key) ?? key;
         }
 
         public static FleeResourceManager Instance

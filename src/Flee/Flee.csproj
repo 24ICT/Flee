@@ -4,22 +4,30 @@
         <AssemblyName>Flee</AssemblyName>
         <AssemblyTitle>Flee</AssemblyTitle>
         <Description>Flee is Fast Lightweight Expression Evaluator.</Description>
-        <Copyright>Copyright © 2022 Flee Contributors</Copyright>
-        <Authors>Flee Contributors</Authors>
-        <Company>Flee</Company>
+        <Copyright>Copyright © 2022-2025 24ICT, Flee Contributors</Copyright>
+        <Authors>M. Parlak, 24ICT</Authors>
+        <Company>Flee / 24ICT</Company>
         <Product>Flee</Product>
         <TargetFrameworks>net6.0;net8.0;net9.0;netstandard2.1;netstandard2.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>2.0.0</PackageVersion>
+        <PackageVersion>2.0.1</PackageVersion>
         <Title>Flee</Title>
-        <PackageProjectUrl>https://github.com/mparlak/Flee</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/mparlak/Flee</PackageLicenseUrl>
-        <PackageIconUrl>https://github.com/mparlak/Flee</PackageIconUrl>
-        <RepositoryUrl>https://github.com/mparlak/Flee</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/24ICT/Flee</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/24ICT/Flee</PackageLicenseUrl>
+        <PackageIconUrl>https://github.com/24ICT/Flee</PackageIconUrl>
+        <RepositoryUrl>https://github.com/24ICT/Flee</RepositoryUrl>
         <PackageTags>flee,expression evaluator,Expression Evaluator for c#</PackageTags>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0|AnyCPU'">
+      <WarningLevel>8</WarningLevel>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0|AnyCPU'">
+      <WarningLevel>8</WarningLevel>
     </PropertyGroup>
 
     <ItemGroup>

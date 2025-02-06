@@ -15,10 +15,10 @@ namespace Flee.ExpressionElements.MemberElements
     internal class FunctionCallElement : MemberElement
     {
         private readonly ArgumentList _myArguments;
-        private readonly ICollection<MethodInfo> _myMethods;
-        private CustomMethodInfo _myTargetMethodInfo;
+        private readonly ICollection<MethodInfo> _myMethods = default!;
+        private CustomMethodInfo _myTargetMethodInfo = default!;
 
-        private Type _myOnDemandFunctionReturnType;
+        private Type _myOnDemandFunctionReturnType = default!;
         public FunctionCallElement(string name, ArgumentList arguments)
         {
             this.MyName = name;
@@ -56,7 +56,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
 
             // No methods with this name exist; try to bind to an on-demand function
-            _myOnDemandFunctionReturnType = MyContext.Variables.ResolveOnDemandFunction(MyName, argTypes);
+            _myOnDemandFunctionReturnType = MyContext!.Variables.ResolveOnDemandFunction(MyName, argTypes);
 
             if (_myOnDemandFunctionReturnType == null)
             {
@@ -65,7 +65,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
-        private void ThrowFunctionNotFoundException(MemberElement previous)
+        private void ThrowFunctionNotFoundException(MemberElement? previous)
         {
             if (previous == null)
             {
@@ -77,7 +77,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
-        private void ThrowNoAccessibleMethodsException(MemberElement previous)
+        private void ThrowNoAccessibleMethodsException(MemberElement? previous)
         {
             if (previous == null)
             {
@@ -117,7 +117,7 @@ namespace Flee.ExpressionElements.MemberElements
 
             foreach (CustomMethodInfo cmi in arr)
             {
-                if (cmi.IsMatch(argTypes, MyPrevious, MyContext) == true)
+                if (cmi.IsMatch(argTypes, MyPrevious, MyContext!) == true)
                 {
                     customInfos.Add(cmi);
                 }
@@ -237,7 +237,7 @@ namespace Flee.ExpressionElements.MemberElements
                 return;
             }
 
-            bool isOwnerMember = MyOptions.IsOwnerType(this.Method.ReflectedType);
+            bool isOwnerMember = MyOptions != null && Method.ReflectedType != null && MyOptions.IsOwnerType(this.Method.ReflectedType);
 
             // Load the owner if required
             if (MyPrevious == null && isOwnerMember == true && this.IsStatic == false)
@@ -258,9 +258,10 @@ namespace Flee.ExpressionElements.MemberElements
             EmitElementArrayLoad(elements, typeof(object), ilg, services);
 
             // Call the function to get the result
-            MethodInfo mi = VariableCollection.GetFunctionInvokeMethod(_myOnDemandFunctionReturnType);
+            MethodInfo? mi = VariableCollection.GetFunctionInvokeMethod(_myOnDemandFunctionReturnType);
 
-            this.EmitMethodCall(mi, ilg);
+            if (mi != null)
+                this.EmitMethodCall(mi, ilg);
         }
 
         // Emit the arguments to a paramArray method call
@@ -292,8 +293,11 @@ namespace Flee.ExpressionElements.MemberElements
         /// <param name="arrayElementType"></param>
         /// <param name="ilg"></param>
         /// <param name="services"></param>
-        private static void EmitElementArrayLoad(ExpressionElement[] elements, Type arrayElementType, FleeILGenerator ilg, IServiceProvider services)
+        private static void EmitElementArrayLoad(ExpressionElement[] elements, Type? arrayElementType, FleeILGenerator ilg, IServiceProvider services)
         {
+            if (arrayElementType == null)
+                return;
+
             // Load the array length
             LiteralElement.EmitLoad(elements.Length, ilg);
 

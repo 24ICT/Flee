@@ -50,7 +50,7 @@
             for (int i = 0; isAscii && i < 128; i++)
             {
                 bool match = false;
-                for (int j = 0; j < parser.Start.Outgoing.Length; j++)
+                for (int j = 0; j < parser.Start.Outgoing?.Length; j++)
                 {
                     if (parser.Start.Outgoing[j].Match((char)i))
                     {
@@ -67,7 +67,7 @@
                     isAscii = false;
                 }
             }
-            if (parser.Start.Incoming.Length > 0)
+            if (parser.Start.Incoming?.Length > 0)
             {
                 _initial.AddOut(new NFAEpsilonTransition(parser.Start));
                 debug += ", uses initial epsilon";
@@ -76,7 +76,7 @@
             {
                 for (int i = 0; isAscii && i < 128; i++)
                 {
-                    for (int j = 0; j < parser.Start.Outgoing.Length; j++)
+                    for (int j = 0; j < parser.Start.Outgoing?.Length; j++)
                     {
                         if (parser.Start.Outgoing[j].Match((char)i))
                         {
@@ -99,7 +99,7 @@
         {
             int length = 0;
             int pos = 1;
-            NFAState state;
+            NFAState? state;
 
             // The first step of the match loop has been unrolled and
             // optimized for performance below.
@@ -130,13 +130,13 @@
                     this._queue.MarkEnd();
                 }
                 state = this._queue.RemoveFirst();
-                if (state.Value != null)
+                if (state?.Value != null)
                 {
                     match.Update(pos, state.Value);
                 }
                 if (peekChar >= 0)
                 {
-                    state.MatchTransitions((char)peekChar, this._queue, false);
+                    state?.MatchTransitions((char)peekChar, this._queue, false);
                 }
             }
             return length;
@@ -150,18 +150,18 @@
      */
     internal class NFAState
     {
-        internal TokenPattern Value = null;
-        internal NFATransition[] Incoming = new NFATransition[0];
-        internal NFATransition[] Outgoing = new NFATransition[0];
+        internal TokenPattern? Value = null;
+        internal NFATransition[] Incoming = [];
+        internal NFATransition[] Outgoing = [];
         internal bool EpsilonOut = false;
 
         public bool HasTransitions()
         {
-            return Incoming.Length > 0 || Outgoing.Length > 0;
+            return Incoming.Length > 0 || Outgoing?.Length > 0;
         }
         public bool IsAsciiOutgoing()
         {
-            for (int i = 0; i < Outgoing.Length; i++)
+            for (int i = 0; i < Outgoing?.Length; i++)
             {
                 if (!Outgoing[i].IsAscii())
                 {
@@ -177,7 +177,7 @@
             Incoming[Incoming.Length - 1] = trans;
         }
 
-        public NFAState AddOut(char ch, bool ignoreCase, NFAState state)
+        public NFAState AddOut(char ch, bool ignoreCase, NFAState? state)
         {
             if (ignoreCase)
             {
@@ -185,8 +185,8 @@
                 {
                     state = new NFAState();
                 }
-                AddOut(new NFACharTransition(Char.ToLower(ch), state));
-                AddOut(new NFACharTransition(Char.ToUpper(ch), state));
+                AddOut(new NFACharTransition(char.ToLower(ch), state));
+                AddOut(new NFACharTransition(char.ToUpper(ch), state));
                 return state;
             }
             else
@@ -222,17 +222,17 @@
                 state.AddIn(Incoming[i]);
                 Incoming[i].State = state;
             }
-            Incoming = null;
+            Incoming = [];
             for (int i = 0; i < Outgoing.Length; i++)
             {
                 state.AddOut(Outgoing[i]);
             }
-            Outgoing = null;
+            Outgoing = [];
         }
 
-        private NFAState FindUniqueCharTransition(char ch)
+        private NFAState? FindUniqueCharTransition(char ch)
         {
-            NFATransition res = null;
+            NFATransition? res = null;
             NFATransition trans;
 
             for (int i = 0; i < Outgoing.Length; i++)
@@ -790,7 +790,7 @@
             _mark = _last;
         }
 
-        public NFAState RemoveFirst()
+        public NFAState? RemoveFirst()
         {
             if (_first < _last)
             {

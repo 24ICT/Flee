@@ -4,6 +4,7 @@ using Flee.ExpressionElements.Base;
 using Flee.InternalTypes;
 using Flee.Parsing;
 using Flee.Resources;
+using System.Diagnostics;
 
 namespace Flee.PublicTypes
 {
@@ -61,7 +62,7 @@ namespace Flee.PublicTypes
                 isPublic = t.IsNestedPublic;
             }
 
-            bool isSameModuleAsOwner = object.ReferenceEquals(t.Module, this.ExpressionOwner.GetType().Module);
+            bool isSameModuleAsOwner = object.ReferenceEquals(t.Module, this.ExpressionOwner?.GetType().Module);
 
             // Public types are always accessible.  Otherwise they have to be in the same module as the owner
             bool isAccessible = isPublic | isSameModuleAsOwner;
@@ -73,9 +74,9 @@ namespace Flee.PublicTypes
             }
         }
 
-        private void AssertNestedTypeIsAccessible(Type t)
+        private void AssertNestedTypeIsAccessible(Type? t)
         {
-            while ((t != null))
+            while (t != null)
             {
                 AssertTypeIsAccessibleInternal(t);
                 t = t.DeclaringType;
@@ -102,24 +103,29 @@ namespace Flee.PublicTypes
             return context;
         }
 
-        internal void AssertTypeIsAccessible(Type t)
+        internal void AssertTypeIsAccessible(Type? t)
         {
-            if (t.IsNested == true)
+            if (t != null)
             {
-                AssertNestedTypeIsAccessible(t);
-            }
-            else
-            {
-                AssertTypeIsAccessibleInternal(t);
+                if (t.IsNested == true)
+                {
+                    AssertNestedTypeIsAccessible(t);
+                }
+                else
+                {
+                    AssertTypeIsAccessibleInternal(t);
+                }
             }
         }
 
-        internal ExpressionElement Parse(string expression, IServiceProvider services)
+        internal ExpressionElement? Parse(string expression, IServiceProvider services)
         {
             lock (_mySyncRoot)
             {
                 System.IO.StringReader sr = new System.IO.StringReader(expression);
-                ExpressionParser parser = this.Parser;
+                ExpressionParser? parser = this.Parser;
+                if (parser == null)
+                    return null;
                 parser.Reset(sr);
                 parser.Tokenizer.Reset(sr);
                 FleeExpressionAnalyzer analyzer = (FleeExpressionAnalyzer)parser.Analyzer;
@@ -128,7 +134,7 @@ namespace Flee.PublicTypes
 
                 Node rootNode = DoParse();
                 analyzer.Reset();
-                ExpressionElement topElement = (ExpressionElement)rootNode.Values[0];
+                ExpressionElement topElement = (ExpressionElement)rootNode.Values[0]!;
                 return topElement;
             }
         }
@@ -147,7 +153,8 @@ namespace Flee.PublicTypes
         {
             try
             {
-                return this.Parser.Parse();
+                Debug.Assert(this.Parser != null);
+                return this.Parser!.Parse();
             }
             catch (ParserLogException ex)
             {
@@ -203,7 +210,7 @@ namespace Flee.PublicTypes
         {
             get
             {
-                ExpressionParser parser = _myProperties.GetValue<ExpressionParser>("IdentifierParser");
+                ExpressionParser? parser = _myProperties.GetValue<ExpressionParser>("IdentifierParser");
 
                 if (parser == null)
                 {
@@ -227,24 +234,24 @@ namespace Flee.PublicTypes
             set { _myProperties.SetValue("NoClone", value); }
         }
 
-        internal object ExpressionOwner => _myProperties.GetValue<object>("ExpressionOwner");
+        internal object? ExpressionOwner => _myProperties.GetValue<object>("ExpressionOwner");
 
-        internal string CalcEngineExpressionName => _myProperties.GetValue<string>("CalcEngineExpressionName");
+        internal string CalcEngineExpressionName => _myProperties.GetValue<string>("CalcEngineExpressionName") ?? "";
 
-        internal ExpressionParser Parser => _myProperties.GetValue<ExpressionParser>("ExpressionParser");
+        internal ExpressionParser? Parser => _myProperties.GetValue<ExpressionParser>("ExpressionParser");
 
         #endregion
 
         #region "Properties - Public"
-        public ExpressionOptions Options => _myProperties.GetValue<ExpressionOptions>("Options");
+        public ExpressionOptions Options => _myProperties.GetValue<ExpressionOptions>("Options") ?? default!;
 
-        public ExpressionImports Imports => _myProperties.GetValue<ExpressionImports>("Imports");
+        public ExpressionImports Imports => _myProperties.GetValue<ExpressionImports>("Imports") ?? default!;
 
         public VariableCollection Variables => _myVariables;
 
-        public CalculationEngine CalculationEngine => _myProperties.GetValue<CalculationEngine>("CalculationEngine");
+        public CalculationEngine? CalculationEngine => _myProperties.GetValue<CalculationEngine>("CalculationEngine");
 
-        public ExpressionParserOptions ParserOptions => _myProperties.GetValue<ExpressionParserOptions>("ParserOptions");
+        public ExpressionParserOptions ParserOptions => _myProperties.GetValue<ExpressionParserOptions>("ParserOptions") ?? default!;
 
         #endregion
     }

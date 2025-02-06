@@ -64,7 +64,7 @@
     public class ResolveVariableTypeEventArgs : EventArgs
     {
         private readonly string _myName;
-        private Type _myType;
+        private Type _myType = default!;
         internal ResolveVariableTypeEventArgs(string name)
         {
             this._myName = name;
@@ -84,7 +84,7 @@
         private readonly string _myName;
         private readonly Type _myType;
 
-        private object MyValue;
+        private object MyValue = default!;
         internal ResolveVariableValueEventArgs(string name, Type t)
         {
             _myName = name;
@@ -114,7 +114,7 @@
         private readonly string MyName;
         private readonly Type[] MyArgumentTypes;
 
-        private Type _myReturnType;
+        private Type _myReturnType = default!;
         internal ResolveFunctionEventArgs(string name, Type[] argumentTypes)
         {
             MyName = name;
@@ -144,7 +144,7 @@
         private readonly string _myName;
         private readonly object[] _myArguments;
 
-        private object _myFunctionResult;
+        private object _myFunctionResult = default!;
         internal InvokeFunctionEventArgs(string name, object[] arguments)
         {
             _myName = name;

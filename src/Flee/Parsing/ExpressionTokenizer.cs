@@ -8,7 +8,7 @@ namespace Flee.Parsing
     /// </summary>
     internal class ExpressionTokenizer : Tokenizer
     {
-        private readonly ExpressionContext _myContext;
+        private readonly ExpressionContext _myContext = default!;
         
         public ExpressionTokenizer(TextReader input, ExpressionContext context) : base(input, true)
         {
@@ -23,8 +23,8 @@ namespace Flee.Parsing
 
         private void CreatePatterns()
         {
-            TokenPattern pattern = default(TokenPattern);
-            CustomTokenPattern customPattern = default(CustomTokenPattern);
+            TokenPattern pattern = default!;
+            CustomTokenPattern customPattern = default!;
 
             pattern = new TokenPattern(Convert.ToInt32(ExpressionConstants.ADD), "ADD", TokenPattern.PatternType.STRING, "+");
             AddPattern(pattern);

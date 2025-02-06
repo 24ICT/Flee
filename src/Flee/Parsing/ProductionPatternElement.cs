@@ -15,7 +15,7 @@ namespace Flee.Parsing
         private readonly int _id;
         private readonly int _min;
         private readonly int _max;
-        private LookAheadSet _lookAhead;
+        private LookAheadSet? _lookAhead;
 
         public ProductionPatternElement(bool isToken,
                                         int id,
@@ -63,7 +63,7 @@ namespace Flee.Parsing
             return MaxCount;
         }
 
-        internal LookAheadSet LookAhead
+        internal LookAheadSet? LookAhead
         {
             get
             {
@@ -85,16 +85,16 @@ namespace Flee.Parsing
             return !_token;
         }
 
-        public bool IsMatch(Token token)
+        public bool IsMatch(Token? token)
         {
             return IsToken() && token != null && token.Id == _id;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is ProductionPatternElement)
             {
-                var elem = (ProductionPatternElement)obj;
+                ProductionPatternElement elem = (ProductionPatternElement)obj;
                 return this._token == elem._token
                     && this._id == elem._id
                     && this._min == elem._min

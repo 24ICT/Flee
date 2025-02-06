@@ -4,23 +4,23 @@ namespace Flee.CalcEngine.InternalTypes
 {
     internal class PairEqualityComparer : EqualityComparer<ExpressionResultPair>
     {
-        public override bool Equals(ExpressionResultPair x, ExpressionResultPair y)
+        public override bool Equals(ExpressionResultPair? x, ExpressionResultPair? y)
         {
-            return string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(x?.Name, y?.Name, StringComparison.OrdinalIgnoreCase);
         }
 
         public override int GetHashCode(ExpressionResultPair obj)
         {
-            return StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Name);
+            return StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Name!);
         }
     }
 
     internal abstract class ExpressionResultPair
     {
 
-        private string _myName;
+        private string _myName = default!;
 
-        protected IDynamicExpression MyExpression;
+        protected IDynamicExpression MyExpression = default!;
 
         protected ExpressionResultPair()
         {
@@ -38,7 +38,7 @@ namespace Flee.CalcEngine.InternalTypes
             _myName = name;
         }
 
-        public override string ToString()
+        public override string? ToString()
         {
             return _myName;
         }
@@ -51,9 +51,9 @@ namespace Flee.CalcEngine.InternalTypes
         public IDynamicExpression Expression => MyExpression;
     }
 
-    internal class GenericExpressionResultPair<T> : ExpressionResultPair
+    internal class GenericExpressionResultPair<T> : ExpressionResultPair where T : notnull
     {
-        public T MyResult;
+        public T MyResult = default!;
         public GenericExpressionResultPair()
         {
         }
@@ -91,9 +91,9 @@ namespace Flee.CalcEngine.InternalTypes
     public sealed class NodeEventArgs : EventArgs
     {
 
-        private string _myName;
+        private string _myName = default!;
 
-        private object _myResult;
+        private object _myResult = default!;
 
         internal NodeEventArgs()
         {
@@ -111,4 +111,3 @@ namespace Flee.CalcEngine.InternalTypes
     }
 
 }
-

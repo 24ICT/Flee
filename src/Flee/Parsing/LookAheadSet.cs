@@ -43,7 +43,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _elements.Count; i++)
             {
-                var seq = (Sequence)_elements[i];
+                Sequence seq = (Sequence)_elements[i]!;
                 if (min < 0 || seq.Length() < min)
                 {
                     min = seq.Length();
@@ -57,7 +57,7 @@ namespace Flee.Parsing
             int max = 0;
             for (int i = 0; i < _elements.Count; i++)
             {
-                var seq = (Sequence)_elements[i];
+                Sequence seq = (Sequence)_elements[i]!;
                 if (seq.Length() > max)
                 {
                     max = seq.Length();
@@ -72,7 +72,7 @@ namespace Flee.Parsing
             int i;
             for (i = 0; i < _elements.Count; i++)
             {
-                var token = ((Sequence)_elements[i]).GetToken(0);
+                object? token = ((Sequence)_elements[i]!).GetToken(0);
                 if (token != null && !list.Contains(token))
                 {
                     list.Add(token);
@@ -81,7 +81,7 @@ namespace Flee.Parsing
             var result = new int[list.Count];
             for (i = 0; i < list.Count; i++)
             {
-                result[i] = (int)list[i];
+                result[i] = (int)list[i]!;
             }
             return result;
         }
@@ -90,7 +90,7 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < _elements.Count; i++)
             {
-                var seq = (Sequence)_elements[i];
+                Sequence seq = (Sequence)_elements[i]!;
                 if (seq.IsRepetitive())
                 {
                     return true;
@@ -103,7 +103,7 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < _elements.Count; i++)
             {
-                var seq = (Sequence)_elements[i];
+                Sequence seq = (Sequence)_elements[i]!;
                 if (seq.IsNext(parser))
                 {
                     return true;
@@ -116,7 +116,7 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < _elements.Count; i++)
             {
-                var seq = (Sequence)_elements[i];
+                Sequence seq = (Sequence)_elements[i]!;
                 if (seq.IsNext(parser, length))
                 {
                     return true;
@@ -129,7 +129,7 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < _elements.Count; i++)
             {
-                if (set.IsOverlap((Sequence)_elements[i]))
+                if (set.IsOverlap((Sequence)_elements[i]!))
                 {
                     return true;
                 }
@@ -141,7 +141,7 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < _elements.Count; i++)
             {
-                var elem = (Sequence)_elements[i];
+                Sequence elem = (Sequence)_elements[i]!;
                 if (seq.StartsWith(elem) || elem.StartsWith(seq))
                 {
                     return true;
@@ -159,7 +159,7 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < _elements.Count; i++)
             {
-                if (set.Contains((Sequence)_elements[i]))
+                if (set.Contains((Sequence)_elements[i]!))
                 {
                     return true;
                 }
@@ -167,13 +167,13 @@ namespace Flee.Parsing
             return false;
         }
 
-        private Sequence FindSequence(Sequence elem)
+        private Sequence? FindSequence(Sequence elem)
         {
             for (int i = 0; i < _elements.Count; i++)
             {
-                if (_elements[i].Equals(elem))
+                if (_elements[i]!.Equals(elem))
                 {
-                    return (Sequence)_elements[i];
+                    return (Sequence)_elements[i]!;
                 }
             }
             return null;
@@ -200,7 +200,7 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < set._elements.Count; i++)
             {
-                Add((Sequence)set._elements[i]);
+                Add((Sequence)set._elements[i]!);
             }
         }
 
@@ -218,7 +218,7 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < set._elements.Count; i++)
             {
-                Remove((Sequence)set._elements[i]);
+                Remove((Sequence)set._elements[i]!);
             }
         }
 
@@ -227,8 +227,8 @@ namespace Flee.Parsing
             LookAheadSet result = new LookAheadSet(_maxLength - 1);
             for (int i = 0; i < _elements.Count; i++)
             {
-                var seq = (Sequence)_elements[i];
-                var value = seq.GetToken(0);
+                Sequence seq = (Sequence)_elements[i]!;
+                object? value = seq.GetToken(0);
                 if (value != null && token == (int)value)
                 {
                     result.Add(seq.Subsequence(1));
@@ -242,8 +242,8 @@ namespace Flee.Parsing
             LookAheadSet result = new LookAheadSet(_maxLength);
             for (int i = 0; i < _elements.Count; i++)
             {
-                var seq1 = (Sequence)_elements[i];
-                var seq2 = set.FindSequence(seq1);
+                Sequence seq1 = (Sequence)_elements[i]!;
+                Sequence? seq2 = set.FindSequence(seq1);
                 if (seq2 != null && seq1.IsRepetitive())
                 {
                     result.Add(seq2);
@@ -273,7 +273,7 @@ namespace Flee.Parsing
             // Create combinations
             for (int i = 0; i < _elements.Count; i++)
             {
-                var first = (Sequence)_elements[i];
+                Sequence first = (Sequence)_elements[i]!;
                 if (first.Length() >= _maxLength)
                 {
                     result.Add(first);
@@ -286,7 +286,7 @@ namespace Flee.Parsing
                 {
                     for (int j = 0; j < set._elements.Count; j++)
                     {
-                        var second = (Sequence)set._elements[j];
+                        Sequence second = (Sequence)set._elements[j]!;
                         result.Add(first.Concat(_maxLength, second));
                     }
                 }
@@ -300,7 +300,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _elements.Count; i++)
             {
-                var seq = (Sequence)_elements[i];
+                Sequence seq = (Sequence)_elements[i]!;
                 if (set.IsOverlap(seq))
                 {
                     result.Add(seq);
@@ -322,10 +322,10 @@ namespace Flee.Parsing
             // Create combinations
             for (int i = 0; i < _elements.Count; i++)
             {
-                var first = (Sequence)_elements[i];
+                Sequence first = (Sequence)_elements[i]!;
                 for (int j = 0; j < set._elements.Count; j++)
                 {
-                    var second = (Sequence)set._elements[j];
+                    Sequence second = (Sequence)set._elements[j]!;
                     if (first.StartsWith(second))
                     {
                         result.Add(first.Subsequence(second.Length()));
@@ -341,7 +341,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _elements.Count; i++)
             {
-                var seq = (Sequence)_elements[i];
+                Sequence seq = (Sequence)_elements[i]!;
                 if (seq.IsRepetitive())
                 {
                     result.Add(seq);
@@ -359,16 +359,19 @@ namespace Flee.Parsing
             return ToString(null);
         }
 
-        public string ToString(Tokenizer tokenizer)
+        public string ToString(Tokenizer? tokenizer)
         {
             StringBuilder buffer = new StringBuilder();
 
             buffer.Append("{");
             for (int i = 0; i < _elements.Count; i++)
             {
-                var seq = (Sequence)_elements[i];
-                buffer.Append("\n  ");
-                buffer.Append(seq.ToString(tokenizer));
+                Sequence? seq = (Sequence?)_elements[i];
+                if (seq != null)
+                {
+                    buffer.Append("\n  ");
+                    buffer.Append(seq.ToString(tokenizer));
+                }
             }
             buffer.Append("\n}");
             return buffer.ToString();
@@ -417,7 +420,7 @@ namespace Flee.Parsing
                 return _tokens.Count;
             }
 
-            public object GetToken(int pos)
+            public object? GetToken(int pos)
             {
                 if (pos >= 0 && pos < _tokens.Count)
                 {
@@ -429,7 +432,7 @@ namespace Flee.Parsing
                 }
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 if (obj is Sequence)
                 {
@@ -449,7 +452,7 @@ namespace Flee.Parsing
                 }
                 for (int i = 0; i < _tokens.Count; i++)
                 {
-                    if (!_tokens[i].Equals(seq._tokens[i]))
+                    if (!_tokens[i]!.Equals(seq._tokens[i]))
                     {
                         return false;
                     }
@@ -470,7 +473,7 @@ namespace Flee.Parsing
                 }
                 for (int i = 0; i < seq._tokens.Count; i++)
                 {
-                    if (!_tokens[i].Equals(seq._tokens[i]))
+                    if (!_tokens[i]!.Equals(seq._tokens[i]))
                     {
                         return false;
                     }
@@ -487,8 +490,8 @@ namespace Flee.Parsing
             {
                 for (int i = 0; i < _tokens.Count; i++)
                 {
-                    var id = (int)_tokens[i];
-                    var token = parser.PeekToken(i);
+                    int id = (int)_tokens[i]!;
+                    Token? token = parser.PeekToken(i);
                     if (token == null || token.Id != id)
                     {
                         return false;
@@ -505,8 +508,8 @@ namespace Flee.Parsing
                 }
                 for (int i = 0; i < length; i++)
                 {
-                    var id = (int)_tokens[i];
-                    var token = parser.PeekToken(i);
+                    int id = (int)_tokens[i]!;
+                    Token? token = parser.PeekToken(i);
                     if (token == null || token.Id != id)
                     {
                         return false;
@@ -520,7 +523,7 @@ namespace Flee.Parsing
                 return ToString(null);
             }
 
-            public string ToString(Tokenizer tokenizer)
+            public string ToString(Tokenizer? tokenizer)
             {
                 StringBuilder buffer = new StringBuilder();
 
@@ -533,13 +536,16 @@ namespace Flee.Parsing
                     buffer.Append("[");
                     for (int i = 0; i < _tokens.Count; i++)
                     {
-                        var id = (int)_tokens[i];
-                        var str = tokenizer.GetPatternDescription(id);
-                        if (i > 0)
+                        int? id = (int?)_tokens[i];
+                        if (id != null)
                         {
-                            buffer.Append(" ");
+                            string? str = tokenizer.GetPatternDescription((int)id);
+                            if (i > 0)
+                            {
+                                buffer.Append(" ");
+                            }
+                            buffer.Append(str);
                         }
-                        buffer.Append(str);
                     }
                     buffer.Append("]");
                 }

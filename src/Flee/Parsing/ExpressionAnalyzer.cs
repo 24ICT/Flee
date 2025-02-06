@@ -510,8 +510,11 @@
         /// </summary>
         /// <param name="node"></param>
         /// <param name="child"></param>
-        public override void Child(Production node, Node child)
+        public override void Child(Production node, Node? child)
         {
+            if (child == null)
+                return;
+
             switch (node.Id)
             {
                 case (int)ExpressionConstants.EXPRESSION:

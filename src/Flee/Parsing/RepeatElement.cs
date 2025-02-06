@@ -21,7 +21,7 @@ namespace Flee.Parsing
         private readonly int _max;
         private readonly RepeatType _type;
         private int _matchStart;
-        private BitArray _matches;
+        private BitArray? _matches;
 
         public RepeatElement(Element elem,
                              int min,
@@ -97,16 +97,19 @@ namespace Flee.Parsing
                 FindMatches(m, buffer, start, 0, 0, 0);
             }
 
-            // Find first non-skipped match
-            for (int i = _matches.Count - 1; i >= 0; i--)
+            if (_matches != null)
             {
-                if (_matches[i])
+                // Find first non-skipped match
+                for (int i = _matches.Count - 1; i >= 0; i--)
                 {
-                    if (skip == 0)
+                    if (_matches[i])
                     {
-                        return i;
+                        if (skip == 0)
+                        {
+                            return i;
+                        }
+                        skip--;
                     }
-                    skip--;
                 }
             }
             return -1;
@@ -124,16 +127,19 @@ namespace Flee.Parsing
                 FindMatches(m, buffer, start, 0, 0, 0);
             }
 
-            // Find first non-skipped match
-            for (int i = 0; i < _matches.Count; i++)
+            if (_matches != null)
             {
-                if (_matches[i])
+                // Find first non-skipped match
+                for (int i = 0; i < _matches.Count; i++)
                 {
-                    if (skip == 0)
+                    if (_matches[i])
                     {
-                        return i;
+                        if (skip == 0)
+                        {
+                            return i;
+                        }
+                        skip--;
                     }
-                    skip--;
                 }
             }
             return -1;
@@ -179,10 +185,11 @@ namespace Flee.Parsing
             int subLength;
 
             // Check match ending here
-            if (count > _max)
+            if (count > _max || _matches == null)
             {
                 return;
             }
+
             if (_min <= count && attempt == 0)
             {
                 if (_matches.Length <= length)

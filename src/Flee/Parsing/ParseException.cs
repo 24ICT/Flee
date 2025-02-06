@@ -59,8 +59,8 @@ namespace Flee.Parsing
         }
 
         private readonly ErrorType _type;
-        private readonly string _info;
-        private readonly ArrayList _details;
+        private readonly string? _info;
+        private readonly ArrayList? _details;
         private readonly int _line;
         private readonly int _column;
 
@@ -73,7 +73,7 @@ namespace Flee.Parsing
         /// <param name="line"></param>
         /// <param name="column"></param>
         public ParseException(ErrorType type,
-                              string info,
+                              string? info,
                               int line,
                               int column)
             : this(type, info, null, line, column)
@@ -92,8 +92,8 @@ namespace Flee.Parsing
         /// <param name="line"></param>
         /// <param name="column"></param>
         public ParseException(ErrorType type,
-                              string info,
-                              ArrayList details,
+                              string? info,
+                              ArrayList? details,
                               int line,
                               int column)
         {
@@ -113,16 +113,16 @@ namespace Flee.Parsing
             return Type;
         }
 
-        public string Info => _info;
+        public string? Info => _info;
 
-        public string GetInfo()
+        public string? GetInfo()
         {
             return Info;
         }
 
-        public ArrayList Details => new ArrayList(_details);
+        public ArrayList? Details => _details != null ? new ArrayList(_details) : null;
 
-        public ArrayList GetDetails()
+        public ArrayList? GetDetails()
         {
             return Details;
         }
@@ -231,19 +231,21 @@ namespace Flee.Parsing
         {
             StringBuilder buffer = new StringBuilder();
 
-            for (int i = 0; i < _details.Count; i++)
+            if (_details != null)
             {
-                if (i > 0)
+                for (int i = 0; i < _details.Count; i++)
                 {
-                    buffer.Append(", ");
-                    if (i + 1 == _details.Count)
+                    if (i > 0)
                     {
-                        buffer.Append("or ");
+                        buffer.Append(", ");
+                        if (i + 1 == _details.Count)
+                        {
+                            buffer.Append("or ");
+                        }
                     }
+                    buffer.Append(_details[i]);
                 }
-                buffer.Append(_details[i]);
             }
-
             return buffer.ToString();
         }
     }

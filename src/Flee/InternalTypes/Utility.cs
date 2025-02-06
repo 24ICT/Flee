@@ -15,7 +15,7 @@ namespace Flee.InternalTypes
         {
         }
 
-        public static void AssertNotNull(object o, string paramName)
+        public static void AssertNotNull(object? o, string paramName)
         {
             if (o == null)
             {
@@ -209,7 +209,7 @@ namespace Flee.InternalTypes
             }
         }
 
-        public static Type GetBitwiseOpType(Type leftType, Type rightType)
+        public static Type? GetBitwiseOpType(Type leftType, Type rightType)
         {
             if (IsIntegralType(leftType) == false || IsIntegralType(rightType) == false)
             {
@@ -228,7 +228,7 @@ namespace Flee.InternalTypes
         /// <param name="sourceType">The type to convert from</param>
         /// <param name="destType">The type to convert to (can be null if it's not known beforehand)</param>
         /// <returns>The operator's method or null of no match is found</returns>
-        public static MethodInfo GetSimpleOverloadedOperator(string name, Type sourceType, Type destType)
+        public static MethodInfo? GetSimpleOverloadedOperator(string name, Type sourceType, Type? destType)
         {
             Hashtable data = new Hashtable();
             data.Add("Name", string.Concat("op_", name));
@@ -238,11 +238,12 @@ namespace Flee.InternalTypes
             const BindingFlags flags = BindingFlags.Public | BindingFlags.Static;
 
             // Look on the source type and its ancestors
-            MemberInfo[] members = new MemberInfo[0];
+            MemberInfo[] members;
+            Type? currenttype = sourceType;
             do
             {
-                members = sourceType.FindMembers(MemberTypes.Method, flags, SimpleOverloadedOperatorFilter, data);
-            } while (members.Length == 0 && (sourceType = sourceType.BaseType) != null);
+                members = currenttype.FindMembers(MemberTypes.Method, flags, SimpleOverloadedOperatorFilter, data);
+            } while (members.Length == 0 && (currenttype = currenttype.BaseType) != null);
 
             if (members.Length == 0 && destType != null)
             {
@@ -273,12 +274,12 @@ namespace Flee.InternalTypes
         /// <param name="value"></param>
         /// <returns></returns>
         /// <remarks></remarks>
-        private static bool SimpleOverloadedOperatorFilter(MemberInfo member, object value)
+        private static bool SimpleOverloadedOperatorFilter(MemberInfo member, object? value)
         {
-            IDictionary data = (IDictionary)value;
+            IDictionary? data = (IDictionary?)value;
             MethodInfo method = (MethodInfo)member;
 
-            bool nameMatch = method.IsSpecialName == true && method.Name.Equals((string)data["Name"], StringComparison.OrdinalIgnoreCase);
+            bool nameMatch = method.IsSpecialName == true && method.Name.Equals((string?)data?["Name"], StringComparison.OrdinalIgnoreCase);
 
             if (nameMatch == false)
             {
@@ -286,7 +287,7 @@ namespace Flee.InternalTypes
             }
 
             // destination type might not be known
-            Type destType = (Type)data["destType"];
+            Type? destType = (Type?)data?["destType"];
 
             if (destType != null)
             {
@@ -299,23 +300,24 @@ namespace Flee.InternalTypes
             }
 
             ParameterInfo[] parameters = method.GetParameters();
-            bool argumentMatch = parameters.Length > 0 && parameters[0].ParameterType.IsAssignableFrom((Type)data["sourceType"]);
+            bool argumentMatch = parameters.Length > 0 && parameters[0].ParameterType.IsAssignableFrom((Type?)data?["sourceType"]);
 
             return argumentMatch;
         }
 
-        public static MethodInfo GetOverloadedOperator(string name, Type sourceType, Binder binder, params Type[] argumentTypes)
+        public static MethodInfo? GetOverloadedOperator(string name, Type sourceType, Binder binder, params Type[] argumentTypes)
         {
             name = string.Concat("op_", name);
-            MethodInfo mi = null;
+            MethodInfo? mi = null;
+            Type? type = sourceType;
             do
             {
-                mi = sourceType.GetMethod(name, BindingFlags.Public | BindingFlags.Static, binder, CallingConventions.Any, argumentTypes, null);
+                mi = type.GetMethod(name, BindingFlags.Public | BindingFlags.Static, binder, CallingConventions.Any, argumentTypes, null);
                 if (mi != null && mi.IsSpecialName == true)
                 {
                     return mi;
                 }
-            } while ((sourceType = sourceType.BaseType) != null);
+            } while ((type = type.BaseType) != null);
 
             return null;
         }

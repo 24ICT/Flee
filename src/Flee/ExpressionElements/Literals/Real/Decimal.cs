@@ -30,12 +30,12 @@ namespace Flee.ExpressionElements.Literals.Real
             typeof(bool),
             typeof(byte)
         };
-            return typeof(decimal).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.Any, types, null);
+            return typeof(decimal).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.Any, types, null)!;
         }
 
-        public static DecimalLiteralElement Parse(string image, IServiceProvider services)
+        public static DecimalLiteralElement? Parse(string image, IServiceProvider services)
         {
-            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
+            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions))!;
             DecimalLiteralElement element = new DecimalLiteralElement();
 
             try
@@ -43,7 +43,7 @@ namespace Flee.ExpressionElements.Literals.Real
                 decimal value = options.ParseDecimal(image);
                 return new DecimalLiteralElement(value);
             }
-            catch (OverflowException ex)
+            catch (OverflowException)
             {
                 element.OnParseOverflow(image);
                 return null;
@@ -71,6 +71,6 @@ namespace Flee.ExpressionElements.Literals.Real
             Utility.EmitLoadLocal(ilg, index);
         }
 
-        public override System.Type ResultType => typeof(decimal);
+        public override Type ResultType => typeof(decimal);
     }
 }

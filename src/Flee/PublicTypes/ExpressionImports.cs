@@ -9,9 +9,9 @@ namespace Flee.PublicTypes
 
         private static Dictionary<string, Type> OurBuiltinTypeMap = CreateBuiltinTypeMap();
         private NamespaceImport MyRootImport;
-        private TypeImport MyOwnerImport;
+        private TypeImport MyOwnerImport = default!;
+        private ExpressionContext MyContext = default!;
 
-        private ExpressionContext MyContext;
         internal ExpressionImports()
         {
             MyRootImport = new NamespaceImport("true");
@@ -65,7 +65,7 @@ namespace Flee.PublicTypes
 
         internal bool HasNamespace(string ns)
         {
-            NamespaceImport import = MyRootImport.FindImport(ns) as NamespaceImport;
+            NamespaceImport? import = MyRootImport.FindImport(ns) as NamespaceImport;
             return (import != null);
         }
 
@@ -76,7 +76,7 @@ namespace Flee.PublicTypes
                 return MyRootImport;
             }
 
-            NamespaceImport import = MyRootImport.FindImport(ns) as NamespaceImport;
+            NamespaceImport? import = MyRootImport.FindImport(ns) as NamespaceImport;
 
             if (import == null)
             {
@@ -92,13 +92,13 @@ namespace Flee.PublicTypes
             return MyOwnerImport.FindMembers(memberName, memberType);
         }
 
-        internal Type FindType(string[] typeNameParts)
+        internal Type? FindType(string[] typeNameParts)
         {
             string[] namespaces = new string[typeNameParts.Length - 1];
             string typeName = typeNameParts[typeNameParts.Length - 1];
 
             System.Array.Copy(typeNameParts, namespaces, namespaces.Length);
-            ImportBase currentImport = MyRootImport;
+            ImportBase? currentImport = MyRootImport;
 
             foreach (string ns in namespaces)
             {
@@ -112,9 +112,9 @@ namespace Flee.PublicTypes
             return currentImport?.FindType(typeName);
         }
 
-        static internal Type GetBuiltinType(string name)
+        static internal Type? GetBuiltinType(string name)
         {
-            Type t = null;
+            Type? t = null;
 
             if (OurBuiltinTypeMap.TryGetValue(name, out t) == true)
             {
@@ -150,7 +150,7 @@ namespace Flee.PublicTypes
             Utility.AssertNotNull(t, "t");
             Utility.AssertNotNull(ns, "namespace");
 
-            MethodInfo mi = t.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+            MethodInfo? mi = t.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
 
             if (mi == null)
             {

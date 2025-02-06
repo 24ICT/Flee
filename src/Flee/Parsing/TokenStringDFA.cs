@@ -55,9 +55,9 @@ namespace Flee.Parsing
             state.Value = value;
         }
 
-        public TokenPattern Match(ReaderBuffer buffer, bool caseInsensitive)
+        public TokenPattern? Match(ReaderBuffer buffer, bool caseInsensitive)
         {
-            TokenPattern result = null;
+            TokenPattern? result = null;
             DFAState state;
             int pos = 0;
 
@@ -68,7 +68,7 @@ namespace Flee.Parsing
             }
             if (caseInsensitive)
             {
-                c = Char.ToLower((char)c);
+                c = char.ToLower((char)c);
             }
             if (c < 128)
             {
@@ -129,7 +129,7 @@ namespace Flee.Parsing
     internal class DFAState
     {
 
-        internal TokenPattern Value;
+        internal TokenPattern? Value;
 
         internal TransitionTree Tree = new TransitionTree();
     }
@@ -138,9 +138,9 @@ namespace Flee.Parsing
     internal class TransitionTree
     {
         private char _value = '\0';
-        private DFAState _state;
-        private TransitionTree _left;
-        private TransitionTree _right;
+        private DFAState _state = default!;
+        private TransitionTree _left = default!;
+        private TransitionTree _right = default!;
 
         public TransitionTree()
         {
@@ -150,7 +150,7 @@ namespace Flee.Parsing
         {
             if (lowerCase)
             {
-                c = Char.ToLower(c);
+                c = char.ToLower(c);
             }
             if (_value == '\0' || _value == c)
             {
@@ -170,7 +170,7 @@ namespace Flee.Parsing
         {
             if (lowerCase)
             {
-                c = Char.ToLower(c);
+                c = char.ToLower(c);
             }
             if (_value == '\0')
             {

@@ -11,7 +11,6 @@ namespace Flee.InternalTypes
         private int _myLabelCount;
         private readonly Dictionary<Type, LocalBuilder> _localBuilderTemp;
         private int _myPass;
-        private int _brContext;
         private BranchManager _bm;
 
         public FleeILGenerator(ILGenerator ilg)
@@ -25,7 +24,7 @@ namespace Flee.InternalTypes
 
         public int GetTempLocalIndex(Type localType)
         {
-            LocalBuilder local = null;
+            LocalBuilder? local = null;
 
             if (_localBuilderTemp.TryGetValue(localType, out local) == false)
             {
@@ -195,10 +194,12 @@ namespace Flee.InternalTypes
             }
         }
 
-        public void MarkLabel(Label lbl)
+        public void MarkLabel(Label? lbl)
         {
-            _myIlGenerator.MarkLabel(lbl);
-            _bm.MarkLabel(this, lbl);
+            if (lbl == null)
+                return;
+            _myIlGenerator.MarkLabel((Label)lbl);
+            _bm.MarkLabel(this, (Label)lbl);
         }
 
 

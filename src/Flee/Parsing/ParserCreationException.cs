@@ -66,27 +66,27 @@ namespace Flee.Parsing
         }
 
         private readonly ErrorType _type;
-        private readonly string _name;
-        private readonly string _info;
-        private readonly ArrayList _details;
+        private readonly string? _name;
+        private readonly string? _info;
+        private readonly ArrayList? _details;
 
         public ParserCreationException(ErrorType type,
-                                       String info)
+                                       string info)
             : this(type, null, info)
         {
         }
 
         public ParserCreationException(ErrorType type,
-                                       String name,
-                                       String info)
+                                       string? name,
+                                       string? info)
             : this(type, name, info, null)
         {
         }
 
         public ParserCreationException(ErrorType type,
-                                       String name,
-                                       String info,
-                                       ArrayList details)
+                                       string? name,
+                                       string? info,
+                                       ArrayList? details)
         {
 
             this._type = type;
@@ -102,16 +102,16 @@ namespace Flee.Parsing
             return Type;
         }
 
-        public string Name => _name;
+        public string? Name => _name;
 
-        public string GetName()
+        public string? GetName()
         {
             return Name;
         }
 
-        public string Info => _info;
+        public string? Info => _info;
 
-        public string GetInfo()
+        public string? GetInfo()
         {
             return Info;
         }
@@ -122,23 +122,21 @@ namespace Flee.Parsing
             {
                 StringBuilder buffer = new StringBuilder();
 
-                if (_details == null)
+                if (_details != null)
                 {
-                    return null;
-                }
-                for (int i = 0; i < _details.Count; i++)
-                {
-                    if (i > 0)
+                    for (int i = 0; i < _details.Count; i++)
                     {
-                        buffer.Append(", ");
-                        if (i + 1 == _details.Count)
+                        if (i > 0)
                         {
-                            buffer.Append("and ");
+                            buffer.Append(", ");
+                            if (i + 1 == _details.Count)
+                            {
+                                buffer.Append("and ");
+                            }
                         }
+                        buffer.Append(_details[i]);
                     }
-                    buffer.Append(_details[i]);
                 }
-
                 return buffer.ToString();
             }
         }

@@ -15,7 +15,7 @@ namespace Flee.InternalTypes
         private ExpressionContext _myContext;
         private ExpressionOptions _myOptions;
         private readonly ExpressionInfo _myInfo;
-        private ExpressionEvaluator<T> _myEvaluator;
+        private ExpressionEvaluator<T> _myEvaluator = default!;
 
         private object _myOwner;
         private const string EmitAssemblyName = "FleeExpression";
@@ -25,7 +25,7 @@ namespace Flee.InternalTypes
         {
             Utility.AssertNotNull(expression, "expression");
             _myExpression = expression;
-            _myOwner = context.ExpressionOwner;
+            _myOwner = context.ExpressionOwner ?? default!;
 
             _myContext = context;
 
@@ -36,7 +36,16 @@ namespace Flee.InternalTypes
 
             _myInfo = new ExpressionInfo();
 
-            this.SetupOptions(_myContext.Options, isGeneric);
+            // Make sure we clone the options
+            _myOptions = _myContext.Options;
+            _myOptions.IsGeneric = isGeneric;
+
+            if (isGeneric)
+            {
+                _myOptions.ResultType = typeof(T);
+            }
+
+            _myOptions.SetOwnerType(_myOwner.GetType());
 
             _myContext.Imports.ImportOwner(_myOptions.OwnerType);
 
@@ -47,20 +56,6 @@ namespace Flee.InternalTypes
             _myContext.CalculationEngine?.FixTemporaryHead(this, _myContext, _myOptions.ResultType);
         }
 
-        private void SetupOptions(ExpressionOptions options, bool isGeneric)
-        {
-            // Make sure we clone the options
-            _myOptions = options;
-            _myOptions.IsGeneric = isGeneric;
-
-            if (isGeneric)
-            {
-                _myOptions.ResultType = typeof(T);
-            }
-
-            _myOptions.SetOwnerType(_myOwner.GetType());
-        }
-
         private void Compile(string expression, ExpressionOptions options)
         {
             // Add the services that will be used by elements during the compile
@@ -68,7 +63,9 @@ namespace Flee.InternalTypes
             this.AddServices(services);
 
             // Parse and get the root element of the parse tree
-            ExpressionElement topElement = _myContext.Parse(expression, services);
+            ExpressionElement? topElement = _myContext.Parse(expression, services);
+            if (topElement == null)
+                return;
 
             if (options.ResultType == null)
             {
@@ -107,15 +104,11 @@ namespace Flee.InternalTypes
         {
             // Create the dynamic method
             Type[] parameterTypes = {
-            typeof(object),
-            typeof(ExpressionContext),
-            typeof(VariableCollection)
-        };
-            DynamicMethod dm = default(DynamicMethod);
-
-            dm = new DynamicMethod(DynamicMethodName, typeof(T), parameterTypes, _myOptions.OwnerType);
-
-            return dm;
+                typeof(object),
+                typeof(ExpressionContext),
+                typeof(VariableCollection)
+            };
+            return new DynamicMethod(DynamicMethodName, typeof(T), parameterTypes, _myOptions.OwnerType);
         }
 
         private void AddServices(IServiceContainer dest)
@@ -167,7 +160,7 @@ namespace Flee.InternalTypes
 
         public object Evaluate()
         {
-            return _myEvaluator(_myOwner, _myContext, _myContext.Variables);
+            return _myEvaluator(_myOwner, _myContext, _myContext.Variables) ?? default!;
         }
 
         public T EvaluateGeneric()
@@ -192,7 +185,7 @@ namespace Flee.InternalTypes
             return _myExpression;
         }
 
-        internal Type ResultType => _myOptions.ResultType;
+        internal Type? ResultType => _myOptions.ResultType;
 
         public string Text => _myExpression;
 

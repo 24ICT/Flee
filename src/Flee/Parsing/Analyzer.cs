@@ -21,24 +21,27 @@ namespace Flee.Parsing
             // Default implementation does nothing
         }
 
-        public Node Analyze(Node node)
+        public Node? Analyze(Node node)
         {
             ParserLogException log = new ParserLogException();
 
-            node = Analyze(node, log);
+            Node? n = Analyze(node, log);
             if (log.Count > 0)
             {
                 throw log;
             }
-            return node;
+            return n;
         }
 
-        private Node Analyze(Node node, ParserLogException log)
+        private Node? Analyze(Node? node, ParserLogException log)
         {
-            var errorCount = log.Count;
+            if (node == null)
+                return null;
+
+            int errorCount = log.Count;
             if (node is Production)
             {
-                var prod = (Production)node;
+                Production prod = (Production)node;
                 prod = NewProduction(prod.Pattern);
                 try
                 {
@@ -111,7 +114,7 @@ namespace Flee.Parsing
             return node;
         }
 
-        public virtual void Child(Production node, Node child)
+        public virtual void Child(Production node, Node? child)
         {
             node.AddChild(child);
         }
@@ -151,7 +154,7 @@ namespace Flee.Parsing
             }
             for (int i = 0; i < node.Count; i++)
             {
-                var child = node[i];
+                Node? child = node[i];
                 if (child != null && child.Id == id)
                 {
                     return child;
@@ -174,7 +177,7 @@ namespace Flee.Parsing
                     -1,
                     -1);
             }
-            var value = node.Values[pos];
+            object? value = node!.Values[pos];
             if (value == null)
             {
                 throw new ParseException(
@@ -229,11 +232,14 @@ namespace Flee.Parsing
 
             for (int i = 0; i < node.Count; i++)
             {
-                var child = node[i];
-                var values = child.Values;
-                if (values != null)
+                Node? child = node[i];
+                if (child != null)
                 {
-                    result.AddRange(values);
+                    ArrayList values = child.Values;
+                    if (values != null)
+                    {
+                        result.AddRange(values);
+                    }
                 }
             }
             return result;

@@ -26,7 +26,7 @@ namespace Flee.Parsing
 
         public override int Count => _children.Count;
 
-        public override Node this[int index]
+        public override Node? this[int index]
         {
             get
             {
@@ -36,12 +36,12 @@ namespace Flee.Parsing
                 }
                 else
                 {
-                    return (Node)_children[index];
+                    return (Node)_children[index]!;
                 }
             }
         }
 
-        public void AddChild(Node child)
+        public void AddChild(Node? child)
         {
             if (child != null)
             {

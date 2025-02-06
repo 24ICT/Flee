@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using System.Text;
 
 namespace Flee.Parsing
@@ -31,7 +32,7 @@ namespace Flee.Parsing
         /// </summary>
         /// <param name="input"></param>
         /// <param name="analyzer"></param>
-        internal Parser(TextReader input, Analyzer analyzer)
+        internal Parser(TextReader input, Analyzer? analyzer)
         {
             _tokenizer = NewTokenizer(input);
             this._analyzer = analyzer ?? NewAnalyzer();
@@ -46,7 +47,7 @@ namespace Flee.Parsing
         {
         }
 
-        internal Parser(Tokenizer tokenizer, Analyzer analyzer)
+        internal Parser(Tokenizer tokenizer, Analyzer? analyzer)
         {
             this._tokenizer = tokenizer;
             this._analyzer = analyzer ?? NewAnalyzer();
@@ -118,7 +119,7 @@ namespace Flee.Parsing
             }
             for (int i = 0; i < _patterns.Count; i++)
             {
-                CheckPattern((ProductionPattern)_patterns[i]);
+                CheckPattern((ProductionPattern)_patterns[i]!);
             }
             SetInitialized(true);
         }
@@ -141,7 +142,7 @@ namespace Flee.Parsing
             }
         }
 
-        
+
         private void CheckElement(string name,
                                   ProductionPatternElement elem)
         {
@@ -170,7 +171,7 @@ namespace Flee.Parsing
 
         public Node Parse()
         {
-            Node root = null;
+            Node root = default!;
 
             // Initialize parser
             if (!_initialized)
@@ -221,18 +222,18 @@ namespace Flee.Parsing
 
         internal ProductionPattern GetPattern(int id)
         {
-            return (ProductionPattern)_patternIds[id];
+            return (ProductionPattern)_patternIds[id]!;
         }
 
         internal ProductionPattern GetStartPattern()
         {
             if (_patterns.Count <= 0)
             {
-                return null;
+                return default!;
             }
             else
             {
-                return (ProductionPattern)_patterns[0];
+                return (ProductionPattern)_patterns[0]!;
             }
         }
 
@@ -286,7 +287,7 @@ namespace Flee.Parsing
             {
                 for (int i = 0; i < child.Count; i++)
                 {
-                    AddNode(node, child[i]);
+                    AddNode(node, child[i]!);
                 }
             }
             else
@@ -304,7 +305,7 @@ namespace Flee.Parsing
 
         internal Token NextToken()
         {
-            Token token = PeekToken(0);
+            Token? token = PeekToken(0);
 
             if (token != null)
             {
@@ -335,7 +336,7 @@ namespace Flee.Parsing
             }
             else
             {
-                var list = new ArrayList(1) {_tokenizer.GetPatternDescription(id)};
+                var list = new ArrayList(1) { _tokenizer.GetPatternDescription(id) };
                 throw new ParseException(
                     ParseException.ErrorType.UNEXPECTED_TOKEN,
                     token.ToShortString(),
@@ -345,7 +346,7 @@ namespace Flee.Parsing
             }
         }
 
-        internal Token PeekToken(int steps)
+        internal Token? PeekToken(int steps)
         {
             while (steps >= _tokens.Count)
             {
@@ -366,7 +367,7 @@ namespace Flee.Parsing
                     AddError(e, true);
                 }
             }
-            return (Token)_tokens[steps];
+            return (Token)_tokens[steps]!;
         }
 
         public override string ToString()
@@ -375,7 +376,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _patterns.Count; i++)
             {
-                buffer.Append(ToString((ProductionPattern)_patterns[i]));
+                buffer.Append(ToString((ProductionPattern)_patterns[i]!));
                 buffer.Append("\n");
             }
             return buffer.ToString();
@@ -408,8 +409,8 @@ namespace Flee.Parsing
             }
             for (i = 0; i < prod.Count; i++)
             {
-                var set = prod[i].LookAhead;
-                if (set.GetMaxLength() > 1)
+                LookAheadSet? set = prod[i].LookAhead;
+                if (set != null && set.GetMaxLength() > 1)
                 {
                     buffer.Append("Using ");
                     buffer.Append(set.GetMaxLength());
@@ -487,7 +488,7 @@ namespace Flee.Parsing
             }
             else
             {
-                return _tokenizer.GetPatternDescription(token);
+                return _tokenizer.GetPatternDescription(token) ?? "";
             }
         }
     }

@@ -22,7 +22,7 @@ namespace Flee.ExpressionElements
             _myChild.Emit(ilg, services);
             ImplicitConverter.EmitImplicitConvert(_myChild.ResultType, _myResultType, ilg);
 
-            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
+            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions))!;
 
             if (options.IsGeneric == false)
             {
@@ -40,6 +40,6 @@ namespace Flee.ExpressionElements
             }
         }
 
-        public override System.Type ResultType => typeof(object);
+        public override Type ResultType => typeof(object);
     }
 }

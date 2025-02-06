@@ -10,8 +10,8 @@ namespace Flee.Parsing
      */
     internal abstract class Node
     {
-        private Node _parent;
-        private ArrayList _values;
+        private Node? _parent;
+        private ArrayList? _values;
 
         internal virtual bool IsHidden()
         {
@@ -44,10 +44,13 @@ namespace Flee.Parsing
             {
                 for (int i = 0; i < Count; i++)
                 {
-                    var line = this[i].StartLine;
-                    if (line >= 0)
+                    if (this[i] != null)
                     {
-                        return line;
+                        int line = this[i]!.StartLine;
+                        if (line >= 0)
+                        {
+                            return line;
+                        }
                     }
                 }
                 return -1;
@@ -65,10 +68,13 @@ namespace Flee.Parsing
             {
                 for (int i = 0; i < Count; i++)
                 {
-                    var col = this[i].StartColumn;
-                    if (col >= 0)
+                    if (this[i] != null)
                     {
-                        return col;
+                        int col = this[i]!.StartColumn;
+                        if (col >= 0)
+                        {
+                            return col;
+                        }
                     }
                 }
                 return -1;
@@ -86,10 +92,13 @@ namespace Flee.Parsing
             {
                 for (int i = Count - 1; i >= 0; i--)
                 {
-                    var line = this[i].EndLine;
-                    if (line >= 0)
+                    if (this[i] != null)
                     {
-                        return line;
+                        int line = this[i]!.EndLine;
+                        if (line >= 0)
+                        {
+                            return line;
+                        }
                     }
                 }
                 return -1;
@@ -105,14 +114,15 @@ namespace Flee.Parsing
         {
             get
             {
-                int col;
-
                 for (int i = Count - 1; i >= 0; i--)
                 {
-                    col = this[i].EndColumn;
-                    if (col >= 0)
+                    if (this[i] != null)
                     {
-                        return col;
+                        int col = this[i]!.EndColumn;
+                        if (col >= 0)
+                        {
+                            return col;
+                        }
                     }
                 }
                 return -1;
@@ -124,9 +134,9 @@ namespace Flee.Parsing
             return EndColumn;
         }
 
-        public Node Parent => _parent;
+        public Node? Parent => _parent;
 
-        public Node GetParent()
+        public Node? GetParent()
         {
             return Parent;
         }
@@ -149,14 +159,14 @@ namespace Flee.Parsing
 
             for (int i = 0; i < Count; i++)
             {
-                count += 1 + this[i].GetDescendantCount();
+                count += 1 + (this[i] != null ? this[i]!.GetDescendantCount() : 0);
             }
             return count;
         }
 
-        public virtual Node this[int index] => null;
+        public virtual Node? this[int index] => null;
 
-        public virtual Node GetChildAt(int index)
+        public virtual Node? GetChildAt(int index)
         {
             return this[index];
         }
@@ -191,15 +201,15 @@ namespace Flee.Parsing
 
         public object GetValue(int pos)
         {
-            return Values[pos];
+            return Values[pos]!;
         }
 
         public ArrayList GetAllValues()
         {
-            return _values;
+            return Values;
         }
 
-        
+
         public void AddValue(object value)
         {
             if (value != null)
@@ -233,7 +243,10 @@ namespace Flee.Parsing
             indent = indent + "  ";
             for (int i = 0; i < Count; i++)
             {
-                this[i].PrintTo(output, indent);
+                if (this[i] != null)
+                {
+                    this[i]!.PrintTo(output, indent);
+                }
             }
         }
     }

@@ -16,9 +16,9 @@ namespace Flee.Parsing
         private readonly StringDFAMatcher _stringDfaMatcher;
         private readonly NFAMatcher _nfaMatcher;
         private readonly RegExpMatcher _regExpMatcher;
-        private ReaderBuffer _buffer = null;
+        private ReaderBuffer? _buffer = null;
         private readonly TokenMatch _lastMatch = new TokenMatch();
-        private Token _previousToken = null;
+        private Token? _previousToken = null;
 
         public Tokenizer(TextReader input)
             : this(input, false)
@@ -55,9 +55,9 @@ namespace Flee.Parsing
             this._useTokenList = useTokenList;
         }
 
-        public string GetPatternDescription(int id)
+        public string? GetPatternDescription(int id)
         {
-            var pattern = _stringDfaMatcher.GetPattern(id);
+            TokenPattern? pattern = _stringDfaMatcher.GetPattern(id);
             if (pattern == null)
             {
                 pattern = _nfaMatcher.GetPattern(id);
@@ -71,12 +71,12 @@ namespace Flee.Parsing
 
         public int GetCurrentLine()
         {
-            return _buffer.LineNumber;
+            return _buffer!.LineNumber;
         }
 
         public int GetCurrentColumn()
         {
-            return _buffer.ColumnNumber;
+            return _buffer!.ColumnNumber;
         }
 
         /**
@@ -146,9 +146,9 @@ namespace Flee.Parsing
             this._lastMatch.Clear();
         }
 
-        public Token Next()
+        public Token? Next()
         {
-            Token token = null;
+            Token? token = null;
 
             do
             {
@@ -179,34 +179,36 @@ namespace Flee.Parsing
             return token;
         }
 
-        private Token NextToken()
+        private Token? NextToken()
         {
             try
             {
                 _lastMatch.Clear();
-                _stringDfaMatcher.Match(_buffer, _lastMatch);
-                _nfaMatcher.Match(_buffer, _lastMatch);
-                _regExpMatcher.Match(_buffer, _lastMatch);
+                _stringDfaMatcher.Match(_buffer!, _lastMatch);
+                _nfaMatcher.Match(_buffer!, _lastMatch);
+                _regExpMatcher.Match(_buffer!, _lastMatch);
                 int line;
                 int column;
                 if (_lastMatch.Length > 0)
                 {
-                    line = _buffer.LineNumber;
-                    column = _buffer.ColumnNumber;
-                    var str = _buffer.Read(_lastMatch.Length);
-                    return NewToken(_lastMatch.Pattern, str, line, column);
+                    line = _buffer!.LineNumber;
+                    column = _buffer!.ColumnNumber;
+                    string? str = _buffer!.Read(_lastMatch.Length);
+                    if (_lastMatch.Pattern == null)
+                        return null;
+                    return NewToken(_lastMatch.Pattern, str ?? "", line, column);
                 }
-                else if (_buffer.Peek(0) < 0)
+                else if (_buffer!.Peek(0) < 0)
                 {
                     return null;
                 }
                 else
                 {
-                    line = _buffer.LineNumber;
-                    column = _buffer.ColumnNumber;
+                    line = _buffer!.LineNumber;
+                    column = _buffer!.ColumnNumber;
                     throw new ParseException(
                         ParseException.ErrorType.UNEXPECTED_CHAR,
-                        _buffer.Read(1),
+                        _buffer!.Read(1),
                         line,
                         column);
                 }
@@ -252,7 +254,7 @@ namespace Flee.Parsing
 
         public abstract void Match(ReaderBuffer buffer, TokenMatch match);
 
-        public TokenPattern GetPattern(int id)
+        public TokenPattern? GetPattern(int id)
         {
             for (int i = 0; i < Patterns.Length; i++)
             {
@@ -299,7 +301,7 @@ namespace Flee.Parsing
 
         public override void Match(ReaderBuffer buffer, TokenMatch match)
         {
-            TokenPattern res = _automaton.Match(buffer, IgnoreCase);
+            TokenPattern? res = _automaton.Match(buffer, IgnoreCase);
 
             if (res != null)
             {
@@ -384,7 +386,7 @@ namespace Flee.Parsing
     internal class GrammaticaRE : REHandler
     {
         private readonly RegExp _regExp;
-        private Matcher _matcher = null;
+        private Matcher? _matcher = null;
 
         public GrammaticaRE(string regex, bool ignoreCase)
         {

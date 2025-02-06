@@ -33,10 +33,10 @@ namespace Flee.Parsing
         private PatternType _type;
         private string _pattern;
         private bool _error;
-        private string _errorMessage;
+        private string? _errorMessage;
         private bool _ignore;
-        private string _ignoreMessage;
-        private string _debugInfo;
+        private string? _ignoreMessage;
+        private string? _debugInfo;
 
         public TokenPattern(int id,
                             string name,
@@ -122,7 +122,7 @@ namespace Flee.Parsing
             }
         }
 
-        public string ErrorMessage
+        public string? ErrorMessage
         {
             get
             {
@@ -140,7 +140,7 @@ namespace Flee.Parsing
             return Error;
         }
 
-        public string GetErrorMessage()
+        public string? GetErrorMessage()
         {
             return ErrorMessage;
         }
@@ -167,7 +167,7 @@ namespace Flee.Parsing
             }
         }
 
-        public string IgnoreMessage
+        public string? IgnoreMessage
         {
             get
             {
@@ -185,7 +185,7 @@ namespace Flee.Parsing
             return Ignore;
         }
 
-        public string GetIgnoreMessage()
+        public string? GetIgnoreMessage()
         {
             return IgnoreMessage;
         }
@@ -202,7 +202,7 @@ namespace Flee.Parsing
             IgnoreMessage = message;
         }
 
-        public string DebugInfo
+        public string? DebugInfo
         {
             get
             {

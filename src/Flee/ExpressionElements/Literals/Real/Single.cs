@@ -18,9 +18,9 @@ namespace Flee.ExpressionElements.Literals.Real
             _myValue = value;
         }
 
-        public static SingleLiteralElement Parse(string image, IServiceProvider services)
+        public static SingleLiteralElement? Parse(string image, IServiceProvider services)
         {
-            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
+            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions))!;
             SingleLiteralElement element = new SingleLiteralElement();
 
             try
@@ -28,7 +28,7 @@ namespace Flee.ExpressionElements.Literals.Real
                 float value = options.ParseSingle(image);
                 return new SingleLiteralElement(value);
             }
-            catch (OverflowException ex)
+            catch (OverflowException)
             {
                 element.OnParseOverflow(image);
                 return null;
@@ -40,6 +40,6 @@ namespace Flee.ExpressionElements.Literals.Real
             ilg.Emit(OpCodes.Ldc_R4, _myValue);
         }
 
-        public override System.Type ResultType => typeof(float);
+        public override Type ResultType => typeof(float);
     }
 }

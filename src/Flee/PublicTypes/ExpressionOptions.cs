@@ -8,10 +8,10 @@ namespace Flee.PublicTypes
     public sealed class ExpressionOptions
     {
 
-        private PropertyDictionary _myProperties;
-        private Type _myOwnerType;
+        private PropertyDictionary _myProperties = default!;
+        private Type _myOwnerType = default!;
         private readonly ExpressionContext _myOwner;
-        internal event EventHandler CaseSensitiveChanged;
+        internal event EventHandler? CaseSensitiveChanged;
 
         internal ExpressionOptions(ExpressionContext owner)
         {
@@ -39,12 +39,15 @@ namespace Flee.PublicTypes
             _myProperties.SetValue("RealLiteralDataType", RealLiteralDataType.Double);
         }
 
-        private void SetParseCulture(CultureInfo ci)
+        private void SetParseCulture(CultureInfo? ci)
         {
             ExpressionParserOptions po = _myOwner.ParserOptions;
-            po.DecimalSeparator = Convert.ToChar(ci.NumberFormat.NumberDecimalSeparator);
-            po.FunctionArgumentSeparator = Convert.ToChar(ci.TextInfo.ListSeparator);
-            po.DateTimeFormat = ci.DateTimeFormat.ShortDatePattern;
+            if (ci != null)
+            {
+                po.DecimalSeparator = Convert.ToChar(ci.NumberFormat.NumberDecimalSeparator);
+                po.FunctionArgumentSeparator = Convert.ToChar(ci.TextInfo.ListSeparator);
+                po.DateTimeFormat = ci.DateTimeFormat.ShortDatePattern;
+            }
         }
 
         #endregion
@@ -58,8 +61,10 @@ namespace Flee.PublicTypes
             return clonedOptions;
         }
 
-        internal bool IsOwnerType(Type t)
+        internal bool IsOwnerType(Type? t)
         {
+            if (t == null)
+                return false;
             return this._myOwnerType.IsAssignableFrom(t);
         }
 
@@ -71,7 +76,7 @@ namespace Flee.PublicTypes
         #endregion
 
         #region "Properties - Public"
-        public Type ResultType
+        public Type? ResultType
         {
             get { return _myProperties.GetValue<Type>("ResultType"); }
             set
@@ -127,18 +132,15 @@ namespace Flee.PublicTypes
             set { _myProperties.SetValue("IntegersAsDoubles", value); }
         }
 
-        public CultureInfo ParseCulture
+        public CultureInfo? ParseCulture
         {
             get { return _myProperties.GetValue<CultureInfo>("ParseCulture"); }
             set
             {
                 Utility.AssertNotNull(value, "ParseCulture");
-                if ((value.LCID != this.ParseCulture.LCID))
-                {
-                    _myProperties.SetValue("ParseCulture", value);
-                    this.SetParseCulture(value);
-                    _myOwner.ParserOptions.RecreateParser();
-                }
+                _myProperties.SetValue("ParseCulture", value);
+                this.SetParseCulture(value!);
+                _myOwner.ParserOptions.RecreateParser();
             }
         }
 

@@ -26,10 +26,11 @@ namespace Flee.ExpressionElements.Literals
 
             LiteralElement.EmitLoad(_myValue.Ticks, ilg);
 
-            ConstructorInfo ci = typeof(TimeSpan).GetConstructor(new Type[] { typeof(long) });
-
-            ilg.Emit(OpCodes.Call, ci);
-
+            ConstructorInfo? ci = typeof(TimeSpan).GetConstructor(new Type[] { typeof(long) });
+            if (ci != null)
+            {
+                ilg.Emit(OpCodes.Call, ci);
+            }
             Utility.EmitLoadLocal(ilg, index);
         }
 

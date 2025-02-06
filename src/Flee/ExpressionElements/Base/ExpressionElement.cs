@@ -48,7 +48,7 @@ namespace Flee.ExpressionElements.Base
                 string key = this.GetType().Name;
                 string value = FleeResourceManager.Instance.GetElementNameString(key);
                 Debug.Assert(value != null, $"Element name for '{key}' not in resource file");
-                return value;
+                return value!;
             }
         }
     }

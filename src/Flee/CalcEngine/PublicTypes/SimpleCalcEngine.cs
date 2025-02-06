@@ -63,7 +63,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         private void LinkIdentifier(string identifier, string expressionName, ExpressionContext context)
         {
-            IExpression child = null;
+            IExpression? child = null;
 
             if (_myExpressions.TryGetValue(identifier, out child) == false)
             {
@@ -100,11 +100,11 @@ namespace Flee.CalcEngine.PublicTypes
         #endregion
 
         #region "Properties - Public"
-        public IExpression this[string name]
+        public IExpression? this[string name]
         {
             get
             {
-                IExpression e = null;
+                IExpression? e = null;
                 _myExpressions.TryGetValue(name, out e);
                 return e;
             }

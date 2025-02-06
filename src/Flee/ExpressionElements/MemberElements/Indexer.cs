@@ -13,7 +13,7 @@ namespace Flee.ExpressionElements.MemberElements
     /// </summary>
     internal class IndexerElement : MemberElement
     {
-        private ExpressionElement _myIndexerElement;
+        private ExpressionElement _myIndexerElement = default!;
 
         private readonly ArgumentList _myIndexerElements;
         public IndexerElement(ArgumentList indexer)
@@ -64,10 +64,12 @@ namespace Flee.ExpressionElements.MemberElements
             // Use the first one that's valid for our indexer type
             foreach (MemberInfo mi in members)
             {
-                PropertyInfo pi = mi as PropertyInfo;
-                if ((pi != null))
+                PropertyInfo? pi = mi as PropertyInfo;
+                if (pi != null)
                 {
-                    methods.Add(pi.GetGetMethod(true));
+                    MethodInfo? mi2 = pi.GetGetMethod(true);
+                    if (mi2 != null)
+                        methods.Add(mi2);
                 }
             }
 
@@ -128,7 +130,7 @@ namespace Flee.ExpressionElements.MemberElements
             func.EmitFunctionCall(this.NextRequiresAddress, ilg, services);
         }
 
-        private Type ArrayType
+        private Type? ArrayType
         {
             get
             {
@@ -147,13 +149,13 @@ namespace Flee.ExpressionElements.MemberElements
 
         protected override bool RequiresAddress => this.IsArray == false;
 
-        public override System.Type ResultType
+        public override Type ResultType
         {
             get
             {
-                if (this.IsArray == true)
+                if (this.IsArray == true && this.ArrayType != null)
                 {
-                    return this.ArrayType.GetElementType();
+                    return this.ArrayType.GetElementType()!;
                 }
                 else
                 {

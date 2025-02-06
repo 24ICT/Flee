@@ -8,10 +8,10 @@ namespace Flee.ExpressionElements.Literals.Integral
 {
     internal class Int32LiteralElement : IntegralLiteralElement
     {
-        private Int32 _myValue;
+        private int _myValue;
         private const string MinValue = "2147483648";
         private readonly bool _myIsMinValue;
-        public Int32LiteralElement(Int32 value)
+        public Int32LiteralElement(int value)
         {
             _myValue = value;
         }
@@ -21,7 +21,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             _myIsMinValue = true;
         }
 
-        public static Int32LiteralElement TryCreate(string image, bool isHex, bool negated)
+        public static Int32LiteralElement? TryCreate(string image, bool isHex, bool negated)
         {
             if (negated == true & image == MinValue)
             {
@@ -29,14 +29,14 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             else if (isHex == true)
             {
-                Int32 value = default(Int32);
+                int value = default!;
 
                 // Since Int32.TryParse will succeed for a string like 0xFFFFFFFF we have to do some special handling
-                if (Int32.TryParse(image, NumberStyles.AllowHexSpecifier, null, out value) == false)
+                if (int.TryParse(image, NumberStyles.AllowHexSpecifier, null, out value) == false)
                 {
                     return null;
                 }
-                else if (value >= 0 & value <= Int32.MaxValue)
+                else if (value >= 0 & value <= int.MaxValue)
                 {
                     return new Int32LiteralElement(value);
                 }
@@ -47,9 +47,9 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             else
             {
-                Int32 value = default(Int32);
+                int value = default!;
 
-                if (Int32.TryParse(image,out value) == true)
+                if (int.TryParse(image, out value) == true)
                 {
                     return new Int32LiteralElement(value);
                 }
@@ -64,7 +64,7 @@ namespace Flee.ExpressionElements.Literals.Integral
         {
             if (_myIsMinValue == true)
             {
-                _myValue = Int32.MinValue;
+                _myValue = int.MinValue;
             }
             else
             {
@@ -77,7 +77,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             EmitLoad(_myValue, ilg);
         }
 
-        public override System.Type ResultType => typeof(Int32);
+        public override Type ResultType => typeof(int);
 
         public int Value => _myValue;
     }

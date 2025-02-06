@@ -19,9 +19,9 @@ namespace Flee.ExpressionElements.Literals.Real
             _myValue = value;
         }
 
-        public static DoubleLiteralElement Parse(string image, IServiceProvider services)
+        public static DoubleLiteralElement? Parse(string image, IServiceProvider services)
         {
-            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
+            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions))!;
             DoubleLiteralElement element = new DoubleLiteralElement();
 
             try
@@ -29,7 +29,7 @@ namespace Flee.ExpressionElements.Literals.Real
                 double value = options.ParseDouble(image);
                 return new DoubleLiteralElement(value);
             }
-            catch (OverflowException ex)
+            catch (OverflowException)
             {
                 element.OnParseOverflow(image);
                 return null;
@@ -41,6 +41,6 @@ namespace Flee.ExpressionElements.Literals.Real
             ilg.Emit(OpCodes.Ldc_R8, _myValue);
         }
 
-        public override System.Type ResultType => typeof(double);
+        public override Type ResultType => typeof(double);
     }
 }

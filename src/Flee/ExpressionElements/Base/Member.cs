@@ -9,13 +9,13 @@ namespace Flee.ExpressionElements.Base
 {
     internal abstract class MemberElement : ExpressionElement
     {
-        protected string MyName;
-        protected MemberElement MyPrevious;
-        protected MemberElement MyNext;
-        protected IServiceProvider MyServices;
-        protected ExpressionOptions MyOptions;
-        protected ExpressionContext MyContext;
-        protected ImportBase MyImport;
+        protected string MyName=default!;
+        protected MemberElement MyPrevious=default!;
+        protected MemberElement? MyNext;
+        protected IServiceProvider MyServices = default!;
+        protected ExpressionOptions? MyOptions;
+        protected ExpressionContext? MyContext;
+        protected ImportBase MyImport = default!;
 
         public const BindingFlags BindFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
@@ -23,7 +23,7 @@ namespace Flee.ExpressionElements.Base
         {
         }
 
-        public void Link(MemberElement nextElement)
+        public void Link(MemberElement? nextElement)
         {
             MyNext = nextElement;
             if ((nextElement != null))
@@ -35,8 +35,8 @@ namespace Flee.ExpressionElements.Base
         public void Resolve(IServiceProvider services)
         {
             MyServices = services;
-            MyOptions = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
-            MyContext = (ExpressionContext)services.GetService(typeof(ExpressionContext));
+            MyOptions = (ExpressionOptions?)services.GetService(typeof(ExpressionOptions));
+            MyContext = (ExpressionContext?)services.GetService(typeof(ExpressionContext));
             this.ResolveInternal();
             this.Validate();
         }
@@ -110,7 +110,8 @@ namespace Flee.ExpressionElements.Base
 
         protected static bool IsGetTypeMethod(MethodInfo mi)
         {
-            MethodInfo miGetType = typeof(object).GetMethod("gettype", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+            MethodInfo? miGetType = typeof(object).GetMethod("gettype", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+            if (miGetType == null) return false;
             return mi.MethodHandle.Equals(miGetType.MethodHandle);
         }
 
@@ -125,7 +126,7 @@ namespace Flee.ExpressionElements.Base
             {
                 ilg.Emit(OpCodes.Call, mi);
             }
-            else if ((!object.ReferenceEquals(mi.DeclaringType, mi.ReflectedType)))
+            else if (!object.ReferenceEquals(mi.DeclaringType, mi.ReflectedType) && mi.ReflectedType != null)
             {
                 // Method is not defined on the value type
 
@@ -172,9 +173,9 @@ namespace Flee.ExpressionElements.Base
         {
             ilg.Emit(OpCodes.Ldarg_0);
 
-            Type ownerType = MyOptions.OwnerType;
+            Type? ownerType = MyOptions?.OwnerType;
 
-            if (ownerType.IsValueType == false)
+            if (ownerType==null || ownerType.IsValueType == false)
             {
                 return;
             }
@@ -196,26 +197,26 @@ namespace Flee.ExpressionElements.Base
         /// <returns></returns>
         private static bool IsMemberPublic(MemberInfo member)
         {
-            FieldInfo fi = member as FieldInfo;
+            FieldInfo? fi = member as FieldInfo;
 
-            if ((fi != null))
+            if (fi != null)
             {
                 return fi.IsPublic;
             }
 
-            PropertyInfo pi = member as PropertyInfo;
+            PropertyInfo? pi = member as PropertyInfo;
 
-            if ((pi != null))
+            if (pi != null)
             {
-                MethodInfo pmi = pi.GetGetMethod(true);
-                return pmi.IsPublic;
+                MethodInfo? pmi = pi.GetGetMethod(true);
+                return pmi?.IsPublic ?? false;
             }
 
-            MethodInfo mi = member as MethodInfo;
+            MethodInfo? mi = member as MethodInfo;
 
-            if ((mi != null))
+            if (mi != null)
             {
-                return mi.IsPublic;
+                return mi?.IsPublic ?? false;
             }
 
             Debug.Assert(false, "unknown member type");
@@ -253,7 +254,7 @@ namespace Flee.ExpressionElements.Base
             }
 
             // See if the member has our access attribute defined
-            ExpressionOwnerMemberAccessAttribute attr = (ExpressionOwnerMemberAccessAttribute)Attribute.GetCustomAttribute(member, typeof(ExpressionOwnerMemberAccessAttribute));
+            ExpressionOwnerMemberAccessAttribute? attr = (ExpressionOwnerMemberAccessAttribute?)Attribute.GetCustomAttribute(member, typeof(ExpressionOwnerMemberAccessAttribute));
 
             if (attr == null)
             {
@@ -269,7 +270,7 @@ namespace Flee.ExpressionElements.Base
 
         public bool IsMemberAccessible(MemberInfo member)
         {
-            if (MyOptions.IsOwnerType(member.ReflectedType) == true)
+            if (member.ReflectedType != null && MyOptions?.IsOwnerType(member.ReflectedType) == true)
             {
                 return IsOwnerMemberAccessible(member, MyOptions);
             }
@@ -298,8 +299,8 @@ namespace Flee.ExpressionElements.Base
             {
                 // We are not the first element; find all members with our name on the type of the previous member
                 // We are not the first element; find all members with our name on the type of the previous member
-                var foundMembers = MyPrevious.TargetType.FindMembers(targets, BindFlags, MyOptions.MemberFilter, MyName);
-                var importedMembers = MyContext.Imports.RootImport.FindMembers(MyName, targets);
+                MemberInfo[] foundMembers = MyPrevious.TargetType.FindMembers(targets, BindFlags, MyOptions!.MemberFilter, MyName);
+                MemberInfo[] importedMembers = MyContext!.Imports.RootImport.FindMembers(MyName, targets);
                 if (foundMembers.Length == 0) //If no members found search in root import
                     return importedMembers;
 
@@ -319,7 +320,7 @@ namespace Flee.ExpressionElements.Base
         protected MemberInfo[] GetDefaultNamespaceMembers(string name, MemberTypes memberType)
         {
             // Search the owner first
-            MemberInfo[] members = MyContext.Imports.FindOwnerMembers(name, memberType);
+            MemberInfo[] members = MyContext!.Imports.FindOwnerMembers(name, memberType);
 
             // Keep only the accessible members
             members = this.GetAccessibleMembers(members);

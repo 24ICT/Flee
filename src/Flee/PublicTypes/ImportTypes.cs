@@ -6,7 +6,7 @@ namespace Flee.PublicTypes
 {
     public abstract class ImportBase : IEnumerable<ImportBase>, IEquatable<ImportBase>
     {
-        private ExpressionContext _myContext;
+        private ExpressionContext _myContext = default!;
 
         internal ImportBase()
         {
@@ -47,15 +47,15 @@ namespace Flee.PublicTypes
             }
         }
 
-        protected bool AlwaysMemberFilter(MemberInfo member, object criteria)
+        protected bool AlwaysMemberFilter(MemberInfo member, object? criteria)
         {
             return true;
         }
 
         internal abstract bool IsMatch(string name);
-        internal abstract Type FindType(string typename);
+        internal abstract Type? FindType(string typename);
 
-        internal virtual ImportBase FindImport(string name)
+        internal virtual ImportBase? FindImport(string name)
         {
             return null;
         }
@@ -95,12 +95,12 @@ namespace Flee.PublicTypes
         #endregion
 
         #region "IEquatable Implementation"
-        public bool Equals(ImportBase other)
+        public bool Equals(ImportBase? other)
         {
             return this.EqualsInternal(other);
         }
 
-        protected abstract bool EqualsInternal(ImportBase import);
+        protected abstract bool EqualsInternal(ImportBase? import);
         #endregion
 
         #region "Properties - Protected"
@@ -170,7 +170,7 @@ namespace Flee.PublicTypes
             }
         }
 
-        internal override Type FindType(string typeName)
+        internal override Type? FindType(string typeName)
         {
             if (string.Equals(typeName, _myType.Name, this.Context.Options.MemberStringComparison) == true)
             {
@@ -182,9 +182,9 @@ namespace Flee.PublicTypes
             }
         }
 
-        protected override bool EqualsInternal(ImportBase import)
+        protected override bool EqualsInternal(ImportBase? import)
         {
-            TypeImport otherSameType = import as TypeImport;
+            TypeImport? otherSameType = import as TypeImport;
             return (otherSameType != null) && object.ReferenceEquals(_myType, otherSameType._myType);
         }
         #endregion
@@ -251,14 +251,14 @@ namespace Flee.PublicTypes
             return string.Equals(_myMethod.Name, name, this.Context.Options.MemberStringComparison);
         }
 
-        internal override Type FindType(string typeName)
+        internal override Type? FindType(string typeName)
         {
             return null;
         }
 
-        protected override bool EqualsInternal(ImportBase import)
+        protected override bool EqualsInternal(ImportBase? import)
         {
-            MethodImport otherSameType = import as MethodImport;
+            MethodImport? otherSameType = import as MethodImport;
             return (otherSameType != null) && _myMethod.MethodHandle.Equals(otherSameType._myMethod.MethodHandle);
         }
 
@@ -310,13 +310,13 @@ namespace Flee.PublicTypes
         {
         }
 
-        internal override Type FindType(string typeName)
+        internal override Type? FindType(string typeName)
         {
             foreach (ImportBase import in this.NonContainerImports)
             {
-                Type t = import.FindType(typeName);
+                Type? t = import.FindType(typeName);
 
-                if ((t != null))
+                if (t != null)
                 {
                     return t;
                 }
@@ -325,7 +325,7 @@ namespace Flee.PublicTypes
             return null;
         }
 
-        internal override ImportBase FindImport(string name)
+        internal override ImportBase? FindImport(string name)
         {
             foreach (ImportBase import in _myImports)
             {
@@ -360,9 +360,9 @@ namespace Flee.PublicTypes
             }
         }
 
-        protected override bool EqualsInternal(ImportBase import)
+        protected override bool EqualsInternal(ImportBase? import)
         {
-            NamespaceImport otherSameType = import as NamespaceImport;
+            NamespaceImport? otherSameType = import as NamespaceImport;
             return (otherSameType != null) && _myNamespace.Equals(otherSameType._myNamespace, this.Context.Options.MemberStringComparison);
         }
 

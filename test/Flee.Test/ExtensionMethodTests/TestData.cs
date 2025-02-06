@@ -2,7 +2,7 @@
 {
     internal class TestData
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         public TestData Sub
         {

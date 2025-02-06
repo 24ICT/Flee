@@ -17,7 +17,7 @@
         private char[] _buffer = new char[BlockSize * 4];
         private int _pos = 0;
         private int _length = 0;
-        private TextReader _input;
+        private TextReader? _input;
         private int _line = 1;
         private int _column = 1;
 
@@ -27,7 +27,7 @@
         }
         public void Dispose()
         {
-            _buffer = null;
+            _buffer = [];
             _pos = 0;
             _length = 0;
             if (_input != null)
@@ -74,7 +74,7 @@
             return (index >= _length) ? -1 : _buffer[index];
         }
 
-        public string Read(int offset)
+        public string? Read(int offset)
         {
             EnsureBuffered(offset + 1);
             if (_pos >= _length)
@@ -83,13 +83,13 @@
             }
             else
             {
-                var count = _length - _pos;
+                int count = _length - _pos;
                 if (count > offset)
                 {
                     count = offset;
                 }
                 UpdateLineColumnNumbers(count);
-                var result = new string(_buffer, _pos, count);
+                string result = new string(_buffer, _pos, count);
                 _pos += count;
                 if (_input == null && _pos >= _length)
                 {
@@ -157,10 +157,10 @@
                     }
                 }
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 _input = null;
-                throw e;
+                throw;
             }
         }
 

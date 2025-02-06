@@ -66,18 +66,30 @@ namespace Flee.PublicTypes
 
         #region "Properties - Public"
 
+        /// <summary>
+        /// Override the DateTimeFormat setting to use.<br/>
+        /// <b>Do not forget to call <seealso cref="RecreateParser"/> </b>
+        /// </summary>
         public string DateTimeFormat
         {
-            get { return _myProperties.GetValue<string>("DateTimeFormat"); }
+            get { return _myProperties.GetValue<string>("DateTimeFormat") ?? "dd/MM/yyyy"; }
             set { _myProperties.SetValue("DateTimeFormat", value); }
         }
 
+        /// <summary>
+        /// Override the RequireDigitsBeforeDecimalPoint setting to use.<br/>
+        /// <b>Do not forget to call <seealso cref="RecreateParser"/> </b>
+        /// </summary>
         public bool RequireDigitsBeforeDecimalPoint
         {
             get { return _myProperties.GetValue<bool>("RequireDigitsBeforeDecimalPoint"); }
             set { _myProperties.SetValue("RequireDigitsBeforeDecimalPoint", value); }
         }
 
+        /// <summary>
+        /// Override the DecimalSeparator setting to use.<br/>
+        /// <b>Do not forget to call <seealso cref="RecreateParser"/> </b>
+        /// </summary>
         public char DecimalSeparator
         {
             get { return _myProperties.GetValue<char>("DecimalSeparator"); }
@@ -88,6 +100,10 @@ namespace Flee.PublicTypes
             }
         }
 
+        /// <summary>
+        /// Override the FunctionArgumentSeparator setting to use.<br/>
+        /// <b>Do not forget to call <seealso cref="RecreateParser"/> </b>
+        /// </summary>
         public char FunctionArgumentSeparator
         {
             get { return _myProperties.GetValue<char>("FunctionArgumentSeparator"); }

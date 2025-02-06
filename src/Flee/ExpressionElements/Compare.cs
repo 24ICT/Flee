@@ -35,10 +35,10 @@ namespace Flee.ExpressionElements
             _myOperation = (LogicalCompareOperation)operation;
         }
 
-        protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
+        protected override Type? GetResultType(System.Type leftType, System.Type rightType)
         {
-            Type binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
-            MethodInfo overloadedOperator = this.GetOverloadedCompareOperator();
+            Type? binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
+            MethodInfo? overloadedOperator = this.GetOverloadedCompareOperator();
             bool isEqualityOp = IsOpTypeEqualOrNotEqual(_myOperation);
 
             // Use our string equality instead of overloaded operator
@@ -47,11 +47,11 @@ namespace Flee.ExpressionElements
                 // String equality
                 return typeof(bool);
             }
-            else if ((overloadedOperator != null))
+            else if (overloadedOperator != null)
             {
                 return overloadedOperator.ReturnType;
             }
-            else if ((binaryResultType != null))
+            else if (binaryResultType != null)
             {
                 // Comparison of numeric operands
                 return typeof(bool);
@@ -77,7 +77,7 @@ namespace Flee.ExpressionElements
             }
         }
 
-        private MethodInfo GetOverloadedCompareOperator()
+        private MethodInfo? GetOverloadedCompareOperator()
         {
             string name = GetCompareOperatorName(_myOperation);
             return base.GetOverloadedBinaryOperator(name, _myOperation);
@@ -101,14 +101,14 @@ namespace Flee.ExpressionElements
                     return "LessThanOrEqual";
                 default:
                     Debug.Assert(false, "unknown compare type");
-                    return null;
+                    return "";
             }
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type binaryResultType = ImplicitConverter.GetBinaryResultType(MyLeftChild.ResultType, MyRightChild.ResultType);
-            MethodInfo overloadedOperator = this.GetOverloadedCompareOperator();
+            Type? binaryResultType = ImplicitConverter.GetBinaryResultType(MyLeftChild.ResultType, MyRightChild.ResultType);
+            MethodInfo? overloadedOperator = this.GetOverloadedCompareOperator();
 
             if (this.AreBothChildrenOfType(typeof(string)))
             {
@@ -117,11 +117,11 @@ namespace Flee.ExpressionElements
                 MyRightChild.Emit(ilg, services);
                 EmitStringEquality(ilg, _myOperation, services);
             }
-            else if ((overloadedOperator != null))
+            else if (overloadedOperator != null)
             {
                 base.EmitOverloadedOperatorCall(overloadedOperator, ilg, services);
             }
-            else if ((binaryResultType != null))
+            else if (binaryResultType != null)
             {
                 // Emit a compare of numeric operands
                 EmitChildWithConvert(MyLeftChild, binaryResultType, ilg, services);
@@ -158,14 +158,15 @@ namespace Flee.ExpressionElements
         private static void EmitStringEquality(FleeILGenerator ilg, LogicalCompareOperation op, IServiceProvider services)
         {
             // Get the StringComparison from the options
-            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
-            Int32LiteralElement ic = new Int32LiteralElement((int)options.StringComparison);
+            ExpressionOptions? options = (ExpressionOptions?)services.GetService(typeof(ExpressionOptions));
+            Int32LiteralElement ic = new Int32LiteralElement((int)options!.StringComparison);
 
             ic.Emit(ilg, services);
 
             // and emit the method call
-            System.Reflection.MethodInfo mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
-            ilg.Emit(OpCodes.Call, mi);
+            MethodInfo? mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
+            Debug.Assert(mi != null, "Method String.Equals() not found");
+            ilg.Emit(OpCodes.Call, mi!);
 
             if (op == LogicalCompareOperation.NotEqual)
             {

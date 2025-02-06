@@ -1,8 +1,6 @@
-# Flee (Supports net9.0, net8.0, net6.0, netstandard2.1, netstandard2.0)
- Fast Lightweight Expression Evaluator.
- Convert this project vb.net to c#.
-
-* Forked from [https://github.com/mparlak/Flee/](https://github.com/mparlak/Flee/)
+# Fast Lightweight Expression Evaluator
+Supports net9.0, net8.0, net6.0, netstandard2.1, netstandard2.0
+Forked from [https://github.com/mparlak/Flee/](https://github.com/mparlak/Flee/)
   
  ## Project Description
 Flee is an expression parser and evaluator for the .NET framework. It allows you to compute the value of string expressions such as sqrt(a^2 + b^2) at runtime. It uses a custom compiler, strongly-typed expression language, and lightweight codegen to compile expressions directly to IL. This means that expression evaluation is extremely fast and efficient.
@@ -29,20 +27,10 @@ Flee is an expression parser and evaluator for the .NET framework. It allows you
 
 ### Installing Flee
 
-You should install [Flee with NuGet](https://www.nuget.org/packages/Flee):
+You should install Flee with NuGet:
 
-    Install-Package Flee
-    
-Or via the .NET Core command line interface:
-
-    dotnet add package Flee
-    
-## NuGet Packages
-
-| Name  | NuGet |
-| :---  | :---  |
-| [Flee](https://www.nuget.org/packages/Flee)                       | [![Flee](https://img.shields.io/badge/nuget-v2.0.0-blue.svg)](https://www.nuget.org/packages/Flee)                 
-
+	Install-Package Flee -Source C:\PathToThePackageDir\Flee.2.0.1.nupkg
+   
 ## More information
 * [Examples](https://github.com/mparlak/Flee/wiki/Examples) to learn how to create and evaluate expressions.
 

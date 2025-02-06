@@ -16,7 +16,7 @@ namespace Flee.InternalTypes
 
     internal class DynamicExpressionVariable<T> : IVariable, IGenericVariable<T>
     {
-        private IDynamicExpression _myExpression;
+        private IDynamicExpression _myExpression = default!;
         public IVariable Clone()
         {
             DynamicExpressionVariable<T> copy = new DynamicExpressionVariable<T>();
@@ -32,15 +32,15 @@ namespace Flee.InternalTypes
         public object ValueAsObject
         {
             get { return _myExpression; }
-            set { _myExpression = value as IDynamicExpression; }
+            set { _myExpression = (IDynamicExpression)value; }
         }
 
-        public System.Type VariableType => _myExpression.Context.Options.ResultType;
+        public Type VariableType => _myExpression.Context.Options.ResultType ?? default!;
     }
 
     internal class GenericExpressionVariable<T> : IVariable, IGenericVariable<T>
     {
-        private IGenericExpression<T> _myExpression;
+        private IGenericExpression<T> _myExpression = default!;
         public IVariable Clone()
         {
             GenericExpressionVariable<T> copy = new GenericExpressionVariable<T>();
@@ -50,7 +50,7 @@ namespace Flee.InternalTypes
 
         public object GetValue()
         {
-            return _myExpression.Evaluate();
+            return _myExpression.Evaluate() ?? default!;
         }
 
         public object ValueAsObject
@@ -59,14 +59,14 @@ namespace Flee.InternalTypes
             set { _myExpression = (IGenericExpression<T>)value; }
         }
 
-        public System.Type VariableType => _myExpression.Context.Options.ResultType;
+        public Type VariableType => _myExpression.Context.Options.ResultType ?? default!;
     }
 
     internal class GenericVariable<T> : IVariable, IGenericVariable<T>
     {
 
 
-        public object MyValue;
+        public object MyValue = default!;
         public IVariable Clone()
         {
             GenericVariable<T> copy = new GenericVariable<T> { MyValue = MyValue };
@@ -78,7 +78,7 @@ namespace Flee.InternalTypes
             return MyValue;
         }
 
-        public System.Type VariableType => typeof(T);
+        public Type VariableType => typeof(T);
 
         public object ValueAsObject
         {
@@ -87,7 +87,7 @@ namespace Flee.InternalTypes
             {
                 if (value == null)
                 {
-                    MyValue = default(T);
+                    MyValue = default!;
                 }
                 else
                 {
